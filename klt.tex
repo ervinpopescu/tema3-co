@@ -223,30 +223,17 @@ This issue is presented here to make users aware of the unexpected behaviour oft
 \section*{BAM-KLT and Wideband Signals}
 Because very promising results of singletone detection in a strong noise were presented in Maccone's paper, we thoughtit worthwhile to test the detection capabilities of BAM-KLT for wideband signals. The following results are based on identical test conditions as in the previous tests for estimation of a wideband signal spectrum. First the results ofhidden BPSK(1) signal detection are presented, followed by the detection of a chirp.
 Asin the previous examples of BPSK signal detection, Figure 10 presents the result as a spectrogram and the power spectrum estimation. Unfortunately, the BPSK(1) characteristic is not visible and, therefore, the signal detection fails.
-A typical behavior of the BAM-KLT is the dominating DC component in both plots. The signal detection capa
-bility of BAM-KLT is much worse than
-the one of the original KLT examples
-(Figures 5 and 6) and even worse than
-what was obtained using the STFT and
-Wigner-Ville methods. Obviously, the
-BPSK signal cannot be detected by the
+A typical behavior of the BAM-KLT is the dominating DC component in both plots. The signal detection capability of BAM-KLT is much worse than the one of the original KLT examples (Figures 5 and 6) and even worse than what was obtained using the STFT and
+Wigner-Ville methods. Obviously, the BPSK signal cannot be detected by the
 BAM-KLT for the given conditions.
 \section*{BAM-KLT and Chirp Signal Detection}
-BAM-KLT shows a much better perfor
-mance when it comes to chirp signals.
-But it is, of course, still not as good as
-the original KLT.\@ From the spectro
-gram (Figure 11) it can be seen that the
-chirp was detected successfully. None
-theless, a very strong DC component
-appears in the spectrum, which could
-make the detection of a low-frequency
-signal impossible. One can say that the
-BAM-KLT is already powerful enough
-to detect narrowband signals, excluding
-low-frequency signals, which are buried
-by strong DC component observed in
-the plots.
+BAM-KLT shows a much better performance when it comes to chirp signals.
+But it is, of course, still not as good as the original KLT.\@ From the spectro
+gram (Figure 11) it can be seen that the chirp was detected successfully. None
+theless, a very strong DC component appears in the spectrum, which could
+make the detection of a low-frequency signal impossible. One can say that the
+BAM-KLT is already powerful enough to detect narrowband signals, excluding
+low-frequency signals, which are buried by strong DC component observed in the plots.
 \section*{Conclusions}
 This article shows that the KLT technique has very high potential and can outperform the classical signal detection methods that are used today. The KLT is equally capable of detecting both narrowband and wideband signals, which deserves close attention if
 we think of future applications in the field of GNSS. The simulations presented here indicate that this transform allows us to detect more feeble signals than FFT, STFT, and Wigner-Ville methods can. The main strength of the KLT is its natural feature of adapting to the characteristics of the processed signal. As a result, it allows the filtering ofa non-stochastic signal from noise.
