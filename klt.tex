@@ -128,119 +128,167 @@ The final example addresses the wideband signal detection capabilities of the va
 \section*{Example 1: Decomposition of the Signal}
 This simple example shows how the decomposition of a signal $X(t)$ is performed using the KLT.\@ The decomposition starts with the computation of the linear autocorrelation function of the received signal.\@ The next step is to build an autocorrelation Toeplitz matrix and use equation (\ref{eq:7}) to solve a set of linear equations.\@ The result of this equation is the set of eigenvalues and their corresponding eigenfunctions.
 
-The parameters presented in Table 2 were selected for this example.
-%Table 2
-Figure 1 shows the time representation of the example signal.\@ Because the sine signal component shows up at the identical power level as the noise component, the desired signal can barely be identified in the plot.
-Figure 2 presents the computed eigenvalues and the corresponding eigenfunctions of the signal.\@ The plot clearly shows that the first two eigenvalues are significantly higher than all others.\@ The first two eigenfunctions corresponding to these eigenvalues are also characteristic as they show sine-like behavior ofa frequency of one hertz, which relates to the hidden sine in the processed signal.
+The parameters presented in \begin{normalsize}\color{red}Table 2\end{normalsize} were selected for this example.
+\begin{center}
+	\color{blue}Table 2. Simulation parameters; decomposition of the sine signal
+\end{center}
+\begin{normalsize}\color{red}Figure 1\end{normalsize} shows the time representation of the example signal.\@ Because the sine signal component shows up at the identical power level as the noise component, the desired signal can barely be identified in the plot.
+\begin{center}
+	\color{blue}Figure 1. X(t), sine signal at 1 hertz plus noise; SNR = 0 decibel, 10 samples
+\end{center}
+\begin{normalsize}\color{red}Figure 2\end{normalsize} presents the computed eigenvalues and the corresponding eigenfunctions of the signal.\@ The plot clearly shows that the first two eigenvalues are significantly higher than all others.\@ The first two eigenfunctions corresponding to these eigenvalues are also characteristic as they show sine-like behavior ofa frequency of one hertz, which relates to the hidden sine in the processed signal.
+
 Moreover, the eigenfunctions allow us to distinguish the non-stochastic content of the signal from the noise content, which is represented by the remaining eigenfunctions.
-%Figure 1
+\begin{center}
+	\color{blue}Figure 2. Eigenfunctions and eigenvalues of the example signal
+\end{center}
 \section*{Example 2: Narrowband Signal Detection}
-Having illustrated the decomposition of a simple signal in low noise environment using the KLT, the next step is to
-investigate thelimits of the KLT technique to detect signals in very strong noise environment.\@ In the following test the KLT performance is compared also against that of an FFT.\@ Note that only one eigenfunction is used to estimate the signal.
-However, any number of computed eigenfunctions may be chosen, depending on the level of filtering required.\@ The more eigenfunctions you consider, the more information about the signal (including noise) becomes part of the estimation.\@ Table 3 presents the parameters selected for this example.
+Having illustrated the decomposition of a simple signal in low noise environment using the KLT, the next step is to investigate thelimits of the KLT technique to detect signals in very strong noise environment.\@ In the following test the KLT performance is compared also against that of an FFT.\@ Note that only one eigenfunction is used to estimate the signal.
+
+However, any number of computed eigenfunctions may be chosen, depending on the level of filtering required.\@ The more eigenfunctions you consider, the more information about the signal (including noise) becomes part of the estimation.\@ \begin{normalsize}\color{red}Table 3\end{normalsize} presents the parameters selected for this example.
+\begin{center}
+	\color{blue}Table 3. Simulation parameters, narrowband signal detection
+\end{center}
 From Table 3 we can see that the frequency resolution of the estimated spectrum is different for both methods.\@ The FFT resolution is inversely proportional to the signal length while the KLT is inversely proportional to the length of the autocorrelation function (ACF).\@ Because the ACF length is shorter than the signal length, the FFT provides better spectral resolution.
-The comparative results of signal detection for FFT and KLT are presented in Figure 3, which clearly shows that the KLT detects a hidden non-stochastic signal with much higher sensitivity than the FFT does.\@ The peak of the hidden signal frequency as detected by the KLT is very high and leaves no doubt whether this is the desired signal or noise.\@ The power spectrum estimates resulting from use ofan FFT technique are much more difficult to interpret.
-To complement the overview of this simulation scenario, Figure 4 shows the first 10 eigenvalues (out of a total of 500) ofa signal derived using KLT estimation.\@ Eigenvalues of the signal + noise are represented in black; eigenvalues of only the noise component are indicated in red.\@ As in Figure 2, the first two eigenvalues clearly stick out.\@ Additional simulations could verify that this behavior is typical for a single sine signal hidden in noise.We also want to highlight the fact that a significantly higher
-eigenvalue is not the only requirement for the KLT being able to detect a non-stochastic signal correctly.\@ The eigenvalue corresponding to the desired signal also has to be higher than the corresponding eigenvalue of the noise.\@ Although each noise eigenvalue in theory is equal to one in numerical calculations, only the average of all eigenvalues is equal to one.\@ Therefore, individual noise eigenvalues are different from one; consequently, we cannot rely on a threshold equal to one to distinguish between noise and signal.
+
+The comparative results of signal detection for FFT and KLT are presented in \begin{normalsize}\color{red}Figure 3\end{normalsize}, which clearly shows that the KLT detects a hidden non-stochastic signal with much higher sensitivity than the FFT does.\@ The peak of the hidden signal frequency as detected by the KLT is very high and leaves no doubt whether this is the desired signal or noise.\@ The power spectrum estimates resulting from use ofan FFT technique are much more difficult to interpret.
+\begin{center}
+	\color{blue}Figure 3. Power spectrum estimates applying FFT and KLT techniques
+\end{center}
+To complement the overview of this simulation scenario, \begin{normalsize}\color{red}Figure 4\end{normalsize} shows the first 10 eigen-values (out of a total of 500) of a signal derived using KLT estimation.\@ Eigenvalues of the signal + noise are represented in black; eigenvalues of only the noise component are indicated in red.\@ As in Figure 2, the first two eigenvalues clearly stick out.\@ Additional simulations could verify that this behavior is typical for a single sine signal hidden in noise.We also want to highlight the fact that a significantly higher eigenvalue is not the only requirement for the KLT being able to detect a non-stochastic signal correctly.\@ The eigenvalue corresponding to the desired signal also has to be higher than the corresponding eigenvalue of the noise.\@ Although each noise eigenvalue in theory is equal to one in numerical calculations, only the average of all eigenvalues is equal to one.\@ Therefore, individual noise eigenvalues are different from one; consequently, we cannot rely on a threshold equal to one to distinguish between noise and signal.
+\begin{center}
+	\color{blue} Figure 4. Eigenvalues of the signal. Black asterisks are the eigenvalues of the received signal + noise, and red ones are the eigenvalues of the noise component in this signal.
+\end{center}
 In Figure 4 the first two noise eigenvalues are clearly not close to one, but higher.\@ By using a longer autocorrelation function, the noise eigenvalues converge to one, but they are still not
 uniformly distributed.
 \section*{Example 3: Wideband Signal Detection}
 The previous example showed that the KLT performs better than the FFT in narrowband signal detection.\@ Next, the KLT is applied to wideband signals.\@ A BPSK-modulated signal serves as the sample signal for detection.
+
 We present the results in the time-frequency domain (see, for example \begin{normalsize}\color{red}Figure 5\end{normalsize}).\@ This allows us to see changes in the estimated spectrums for different instants of a signal observation.
-%Figure 5
+\begin{center}
+	\color{blue}Figure 5. The KLT spectrogram and power spectrum estimation; BPSK(1) signal, SNR = -12 decibels
+\end{center}
+
 A fundamental requirement for achieving a proper estimation of the spectrum is the selection of a windowing function that preserves the original spectral characteristics of the signal without introducing significant distortions due to the estimation process.
 
 In the article by G. Heinzel et alia cited in Additional Resources, the HFT90D window type is proposed as optimum for narrowband signals because it determines the exact amplitude of a sinusoidal component.\@ Further analyses are recommended to determine a most appropriate window for wideband signals.\@ Nevertheless and for demonstration purposes the HFT90D window is made use of in the following wideband example.
-Compared to other flat-top windows — those window functions'that are as flat as possible in the frequency domain — the HFT90D has a relatively narrow three-decibel bandwidth and very strong side-lobe attenuation.\@ According to G.\@ Heinzel et alia, the recommended overlapping of window functions applied to the datastream is 76 percent.\ \begin{normalsize}\color{red}Table 4\end{normalsize} lists the parameters selected for the wideband signal detection example.
+
+Compared to other flat-top windows — those window functions that are as flat as possible in the frequency domain — the HFT90D has a relatively narrow three-decibel bandwidth and very strong side-lobe attenuation.\@ According to G. Heinzel et alia, the recommended overlapping of window functions applied to the datastream is 76 percent.\ \begin{normalsize}\color{red}Table 4\end{normalsize} lists the parameters selected for the wideband signal detection example.
+\begin{center}
+	\color{blue}Table 4. Simulation parameters; wideband signal detection - BPSK(1) modulated
+	siqnal
+\end{center}
 In order to achieve a sufficiently high-frequency resolution of the power spectrum estimation using the KLT technique, the ACF takes 1,000 samples.\@ This, however, comes at the cost of a longer computation time.
+
 Consequently, the KLT needs a high number of eigenfunctions to detect a wideband signal without losing part of the information that describes the non-stochastic signal.\@ In this particular case 50 out of the 1,000 eigenfunctions were chosen.\@ We must keep in mind, however, that the number of eigenfunctions taken to estimate the signals spectrum is indeed the variable KLT parameter that determines the level of filtering.
-In the following sections, we present the results of applying KLT,STFT, and Wigner-Ville methods to detect a hidden BPSK signal with an SNR level of -12 decibels.\@ For each method two plots are presented.\@ The first shows the spectrogram of the processed signal, and the second plot shows the power spectrum estimation obtained by averaging the spectrogram.
-\section*{KLT}
-The top plot in Figure 5 shows the spec
-trogram of the signal computed by the
-Karhunen-Loeve Transform. Most of
-the power clearly appears to be located
-in the lower band of the spectrum, with
-much less power at higher frequencies.
-However, this spectrogram may not be
-precise enough to correctly identify the
-BPSK signal. Therefore, the data is aver
-aged over time, with the obtained power
-spectrum estimation of the averaged
-spectrogram (lower plot) resembling
+
+In the following sections, we present the results of applying KLT, STFT, and Wigner-Ville methods to detect a hidden BPSK signal with an SNR level of -12 decibels.\@ For each method two plots are presented.\@ The first shows the spectrogram of the processed signal, and the second plot shows the power spectrum estimation obtained by averaging the spectrogram.
+\subsection*{KLT}
+The top plot in Figure 5 shows the spectrogram of the signal computed by the
+Karhunen-Loeve Transform. Most of the power clearly appears to be located
+in the lower band of the spectrum, with much less power at higher frequencies.
+However, this spectrogram may not be precise enough to correctly identify the
+BPSK signal. Therefore, the data is averaged over time, with the obtained power
+spectrum estimation of the averaged spectrogram (lower plot) resembling
 quite clearly the BPSK(1) signal.
-\section*{STFT}
-In similar fashion as Figure 5, Figure
-6 provides the results of the spectrum
+\subsection*{STFT}
+In similar fashion as Figure 5, \begin{normalsize}\color{red}Figure 6\end{normalsize} provides the results of the spectrum
 estimation using a Short Time Fourier Transform. The spectrogram as well as the power spectrum show that the STFT method fails to detect the wideband signal.
 Still, the lower frequencies have slightly more power compared to the average. However, the noise dominates the signal; so, we cannot recognize the
 BPSK(1) signal.
-\section*{Wigner-Ville}
+\begin{center}
+	\color{blue}Figure 6. The STFT spectrogram and power spectrum estimation; BPSK(1); SNR = -12dB
+\end{center}
+\subsection*{Wigner-Ville}
 Figure 7 shows the results using the Wigner-Ville method. As with STFT, Wigner-Ville fails to detect the wideband signal.
+\begin{center}
+	\color{blue}Figure 7. The Wigner-Ville spectrogram and power spectrum estimation; BPSK(1); SNR = -12dB
+\end{center}
 To summarize the preceding simulation results, one can observe that the KLT technique indeed is able to detect wideband signals even in the presence of very strong noise, whereas the STFT and Wigner-Ville methods clearly fail.
-Moreover, one can see that, even though
-the SNR level is slightly higher com-
-pared that used in Example 2 (narrow
-band signal detection), more samples of
-the signal were required for estimating
-the power spectrum. A wideband signal
-carries a lot of information that has to
-be observed for a longer period of time
-compared to a narrowband signal in
-order to recognize its non-stochastic
-structure.
+
+Moreover, one can see that, even though the SNR level is slightly higher compared that used in Example 2 (narrowband signal detection), more samples of
+the signal were required for estimating the power spectrum. A wideband signal carries a lot of information that has to be observed for a longer period of time compared to a narrowband signal in order to recognize its non-stochastic structure.
 \section*{Example 4: Chirp Signal Detection}
-We also analyzed a chirp signal with a wide frequency boundary. This type of
-signal was chosen to enable us to evaluate the performance of KLT in detecting
-a dynamic, non-stationary signal. Table 5 lists the simulation parameters for this test.
+We also analyzed a chirp signal with a wide frequency boundary. This type of signal was chosen to enable us to evaluate the performance of KLT in detecting
+a dynamic, non-stationary signal.\ \begin{normalsize}\color{red}Table 5\end{normalsize} lists the simulation parameters for this test.
+\begin{center}
+	\color{blue}Table 5. Simulation parameters; wideband signal detection --- chirp modulated signal
+\end{center}
 In order to be able to achieve a spectrogram estimation with good time resolution, the window length was shortened to 1,000 samples. Also the ACF length was reduced to 500 samples. This setting speeds up the simulation, but reduce the frequency resolution of the KLT spectrum estimation.
-Figure 8 shows the KLT spectrogram andthe power spectrum. For a signal with SNR = -12dB the spectrogram is a little frayed but still readable. The KLT is able to detect the chirp signal in the noise.
+
+\begin{normalsize}\color{red}Figure 8\end{normalsize} shows the KLT spectrogram andthe power spectrum. For a signal with SNR = -12dB the spectrogram is a little frayed but still readable. The KLT is able to detect the chirp signal in the noise. 
+
 The challenge here is to define a proper observation window length. It has to be long enough to detect the signal but also short enough to reach the required time resolution. If only a short time period of the signal is considered, the detection process for a chirp signal is similar to the detection of a narrowband signaland, therefore, allows us to rely on only a few initial eigenfunctions.
+
 Although results are not shown here, as in the previous example the STFT and Wigner-Ville methods both failed to detect the chirp signal under the given conditions.
+\begin{center}
+	\color{red}Figure 8. Spectrogram KLT;\@ chirp;\@ SNR = -12 dB
+\end{center}
 \section*{BAM-KLT:\@ A Step Closer to Fast KLT}
-Again, the biggest drawback of the KLT is its complexity and the resulting high computational burden. As with the Fourier Transform, however, which become popular when its fast implementation (the FFT) became available, the KLT has the potential to experience a similar boost if a fast KLT implementation is discovered.
+Again, the biggest drawback of the KLT is its complexity and the resulting high computatio-nal burden. As with the Fourier Transform, however, which become popular when its fast implementation (the FFT) became available, the KLT has the potential to experience a similar boost if a fast KLT implementation is discovered.
+
 Maccone has already presented an innovative way of using the KLT, which paves the way towards a faster algorithm. He called this method the BAM-KLT (Bordered Autocorrelation Method KLT), and his paper provides an example of successful sine signal detection using the BAM-KLT to correctly detect a signal hidden in noise (SNR = -23 decibels), while the FFT failed.
+
 This work uncovered the fact that eigenvalues are functions of a final instant T (the same T that appears in the definition of the KL expansion of the final instant of the signal). Using this discovery, Maccone defined “the Final Variance Theorem” expressed by an equation:
 \begin{equation}
 	\sigma_{X(T)}^2=\sum_{n=1}^{\infty}\pdv{\lambda_n(T)}{T}
 	\label{eq:8}
 \end{equation}
-This theorem states that the variance ofa stochastic process X(t) isequal to the sum of the series of partial derivatives of eigenvalues A (T) with respect to the final instant T Computing a spectrum of such a partial derivative was found to obtain the partial spectrum of the signal. Similar to the KL expansion, the first terms — i.e., the partial derivatives of the eigenvalues — contain the most useful information about the non-stochastic content of the signal.
+
+This theorem states that the variance ofa stochastic process $X(t)$ isequal to the sum of the series of partial derivatives of eigenvalues $\lambda_n(T)$ with respect to the final instant $T$. Computing a spectrum of such a partial derivative was found to obtain the partial spectrum of the signal. Similar to the KL expansion, the first terms — i.e., the partial derivatives of the eigenvalues — contain the most useful information about the non-stochastic content of the signal.
 
 In theory, using this method in signal processing, one could reduce the computational burden. Instead of calculating both eigenfunctions and eigenvalues, just determining the set of eigenvalues is now sufficient. Additionally, the KLT filtering feature can also be used in this theorem. If only that information kept in the derivative of the first eigenvalue is used, equation (8) can be simplified to:
 \begin{equation}
 	\sigma_{X(T)}^2 \thickapprox \pdv{\lambda_1(T)}{T}
 	\label{eq:9}
 \end{equation}
+
 We must point out that BAM-KLT is still a technique that needs to be explored and further tested before it can be used in a predictable manner.
+
 As an example, BAM-KLT shows unwanted behavior at one half of the Nyquist frequency: When using normal frequency representation for the signal spectrum, the signal is displayed at twice its original frequency. This problem was discussed in the paper by Maccone, but not solved.
-Based on the parameters in Table 6, the following simulation shows another, very interesting behavior of the eigenvalues beyond those discussed by Maccone, which requires further explanation.
+
+Based on the parameters in \begin{normalsize}
+	\color{red}Table 6
+\end{normalsize}, the following simulation shows another, very interesting behavior of the eigenvalues beyond those discussed by Maccone, which requires further explanation.
+\begin{center}
+	\color{blue}Table 6. Simulation parameters for the BAM-KLT example
+\end{center}
 Let's consider only the first two eigenvalues of the signal as a function ofthe time interval and their derivatives. The eigenvalues are plotted in Figure 9. By definition the first eigenvalue always has to be bigger than the second one. But here it seems that the first two eigenvalues become equal at some points. Those represent points of discontinuity of the eigenvalue functions of the time interval. These eigenvalues might also be related to each other, which was not expected.
+
 One possible explanation could lie in the eigenfunctions. They are orthogonal, but they can also have the same spectrum representation (like, for example, sine and cosine). As a consequence, depending on the time span of the signal, one eigenfunction or another has the biggest chance to appear in the signal.
+
 The situation becomes even more complicated when one is processing more complex signals. In that case, one can observe that the eigenvalues interweave not only in pairs but also with further “neighbors.”
+
 This has an effect on the derivatives as well. When computing the FFT ofthe derivatives of the first and the second eigenvalue, the result is a spectrum sine with harmonics, because of the discontinuity of the function. Moreover, the derivatives contain a direct current (DC) component because the mean value of the function is not equal to zero.
+
 This issue is presented here to make users aware of the unexpected behaviour ofthe BAM-KLT and also to show areas for improvement and future investigation.
 \section*{BAM-KLT and Wideband Signals}
 Because very promising results of singletone detection in a strong noise were presented in Maccone's paper, we thoughtit worthwhile to test the detection capabilities of BAM-KLT for wideband signals. The following results are based on identical test conditions as in the previous tests for estimation of a wideband signal spectrum. First the results ofhidden BPSK(1) signal detection are presented, followed by the detection of a chirp.
-Asin the previous examples of BPSK signal detection, Figure 10 presents the result as a spectrogram and the power spectrum estimation. Unfortunately, the BPSK(1) characteristic is not visible and, therefore, the signal detection fails.
-A typical behavior of the BAM-KLT is the dominating DC component in both plots. The signal detection capability of BAM-KLT is much worse than the one of the original KLT examples (Figures 5 and 6) and even worse than what was obtained using the STFT and
-Wigner-Ville methods. Obviously, the BPSK signal cannot be detected by the
-BAM-KLT for the given conditions.
+
+As in the previous examples of BPSK signal detection, \begin{normalsize}\color{red}Figure 10\end{normalsize} presents the result as a spectrogram and the power spectrum estimation. Unfortunately, the BPSK(1) characteristic is not visible and, therefore, the signal detection fails.
+\begin{center}
+	\color{blue}Figure 10. Spectrogram BAM-KLT; BPSK(1); SNR = -12dB
+\end{center}
+A typical behavior of the BAM-KLT is the dominating DC component in both plots. The signal detection  capability of BAM-KLT is much worse than the one of the original KLT examples (Figures 5 and 6) and even worse than what was obtained using the STFT and Wigner-Ville methods. Obviously, the BPSK signal cannot be detected by the BAM-KLT for the given conditions.
 \section*{BAM-KLT and Chirp Signal Detection}
 BAM-KLT shows a much better performance when it comes to chirp signals.
-But it is, of course, still not as good as the original KLT.\@ From the spectro
-gram (Figure 11) it can be seen that the chirp was detected successfully. None
-theless, a very strong DC component appears in the spectrum, which could
-make the detection of a low-frequency signal impossible. One can say that the
-BAM-KLT is already powerful enough to detect narrowband signals, excluding
+But it is, of course, still not as good as the original KLT.\@ From the spectrogram (\begin{normalsize}\color{red}Figure 11\end{normalsize}) it can be seen that the chirp was detected successfully. Nonetheless, a very strong DC component appears in the spectrum, which could
+make the detection of a low-frequency signal impossible. One can say that the BAM-KLT is already powerful enough to detect narrowband signals, excluding
 low-frequency signals, which are buried by strong DC component observed in the plots.
+\begin{center}
+	\color{blue}Figure 11. Spectrogram BAM-KLT;\@ chirp;\@ SNR = -12dB
+\end{center}
 \section*{Conclusions}
 This article shows that the KLT technique has very high potential and can outperform the classical signal detection methods that are used today. The KLT is equally capable of detecting both narrowband and wideband signals, which deserves close attention if
-we think of future applications in the field of GNSS. The simulations presented here indicate that this transform allows us to detect more feeble signals than FFT, STFT, and Wigner-Ville methods can. The main strength of the KLT is its natural feature of adapting to the characteristics of the processed signal. As a result, it allows the filtering ofa non-stochastic signal from noise.
+we think of future applications in the field of GNSS.
+
+The simulations presented here indicate that this transform allows us to detect more feeble signals than FFT, STFT, and Wigner-Ville methods can. The main strength of the KLT is its natural feature of adapting to the characteristics of the processed signal. As a result, it allows the filtering ofa non-stochastic signal from noise.
 
 The KLT is also more flexible and configurable than other known methodologies. This permits the user to directly control thelevel of filtering. The remarkable detection capabilities of KLT, however, must be paid for by a high computational burden.
 
 BAM-KLT, which shows excellent detection performance when applied to pure sinusoidal functions, is capable of significantly reducing the computational load. Therefore, some analogies between the BAM-KLT and the FFT can be drawn. Indeed, the introduction of the FFT made it possible to exploit the Fourier Transform in a numerically efficient way.
+
 A similar future could be expected for the BAM-KLT. However, before BAM-KLT or a closely related methodology can be efficiently applied, the spectrum of detectable signals needs to be significantly enlarged. This article shows that the BAM-KLT is not yet capable of unambiguously detecting wideband signals such as BPSKs appearing as noise or interference in a GNSS-like signal. So, further research work needs to be invested in this area. One potential starting point could be to identify relations between the signals to be detected, the windowing function, and the number of characteristic eigenvalues.
+
 In summary, we can say that the KLT is a very high-performing mathematical tool and could prove to be of great value.
 \end{document} 
