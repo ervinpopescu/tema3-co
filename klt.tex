@@ -1,0 +1,22 @@
+\documentclass[12pt, a4paper, twoside, english]{article}
+\usepackage{array}
+\usepackage{babel}
+\usepackage{color}
+\usepackage{graphicx}
+\usepackage{parskip}
+\usepackage[
+	bookmarks,
+	bookmarksopen=true,
+	pdftitle={Teza},
+	linktocpage]{hyperref}
+
+\author{Ervin Popescu}
+\title{KLT vs FT}
+\begin{document}
+\maketitle
+In spite of its significant advantages, the KLT has not replaced FT yet. In particular, associated complexity and, thus, the computational burden still speak against KLT and in fact favor classical FFT.\@ The Fourier Transform has its fast, numerical implementation called Fast Fourier Transform with a complexity of \(O(n*\log(n))\) (i.e.\ \(n*\log(n)\) addition/multiplication operations on data of length n).
+The complexity of the numerical implementation of the KLT is much higher — \(O(n^2)\).
+The underlying reason for this difference is that the FFT uses a predefined set of orthogonal functions (sines and cosines), 
+whereas the KLT looks for the best representation of the orthogonal function for each individual signal. A comparative summary of the characterizations is presented in Table 1.
+\section*{KLT and FFT — Analogies and Differences}
+\end{document}
