@@ -1,0 +1,418 @@
+                   Sensors 2018, 18, 3809                                                                                 3of22
+                        To address the issues concerning the dynamic model errors and, in particular, measurement
+                   outliers, we propose an adaptive robust approach for two-antenna GPS/INS LC integration in which
+                   the IAE method is utilized to design a factor for the adaptive covariance. Several equations concerned
+                   withIAEdrawbacksarederivedtoaccountforandovercomethenumericalandfeedbackissuesof
+                   two-antennaGPS/INSintegrationcausedbymeasurementoutliersandunknownstateuncertainties,
+                   and an adaptive reconﬁguration for measurement noise covariance according to measurement
+                   reliability is designed. The desirable properties of the proposed approach are summarized as follows:
+                   •    Adaptive modification of noise covariance can treat dynamic model errors and measurement
+                        disturbancetoreducetheirimpactonstateestimation,especiallywhenthestatisticsofbothmeasured
+                        andpredictednoisehavetobeadapted. Withfilterupdating,positivefeedbackandnumericalissues
+                        canbereducedbyquantifyingstatisticalmeasurementnoiseonamoregranularlevelbasedonthe
+                        correspondingquantificationsofmeasurementreliabilityinthecaseofmeasurementoutliers.
+                   •    Theproposedmethodcanaccuratelyquantifymeasurementreliability. Itisanevidence-based
+                        regulation method with the beneﬁt of attenuating the impact of innovation perturbation.
+                        In addition to the assured stability of ﬁlter updating, the performance of the augmented
+                        measurementequationinstateerrorfeedbackforpreciousmeasurementsisimproved.
+                        Thepaperisorganizedasfollows. Anoverviewofthetwo-antennaGPS/INS-integratedalgorithmis
+                   providedinSection2. InSection3,theadaptivemodificationofnoisecovarianceisdiscussed. Thefield
+                   experiment and results for different schemes are compared in Section 4 to verify the superiority of the
+                   proposedapproachcomparedtoexistingmethods. Finally,severalconclusionsofthisworkaredrawn.
+                   2. Two-AntennaGPS/INS
+                   2.1. Inertial Dynamic Model
+                        The inertial dynamic model is derived from the Psi-Angle error model based on INS error
+                   differential equations and summarized as [43]:
+                                                   .
+                                                 δr = −ω ×δr+δv
+                                                   .       en
+                                                                                             n b
+                                                 δv = f×ψ−(2ω +ω )×δv+δg+C δf                                                (1)
+                                                   .                ie     en                b
+                                                  ψ=−(ω +ω )×ψ−Cnδωb
+                                                            ie     en          b
+                   whereδdenotesthecorrespondingerrororuncertaintyofthevectors, . denotestheﬁrstderivatives,
+                                                                                               •
+                   ×denotesthecross-productoftwovectors, δr, δv, and ψ are the position, velocity, and attitude error
+                   state vectors, respectively, f is the speciﬁc force vector, ω   is the earth rotation vector, and ω    is the
+                                                                                 ie                                    en
+                   craft-rate vector [44]. δfb and δωb are the accelerometer error and gyroscope error, respectively, and are
+                   written as:
+                                                                b                b
+                                                              δf =b +diag(f )s
+                                                                      a             a                                        (2)
+                                                             δωb = b +diag(ωb)s
+                                                                      g              g
+                   wherediag(•)denotesthediagonalformofthematrix,andb ands aretheaccelerometerbiasand
+                                                                                      a      a
+                   accelerometer scale factor vectors, respectively. bg and sg are the gyroscope bias and gyroscope scale
+                   factor vectors, respectively. The inertial measurement unit (IMU) sensor error terms ε, such as bias and
+                   scale factors, are modeled as ﬁrst-order Gauss–Markov (GM) processes:
+                                                                 .       −1
+                                                                 ε = −T    ε+wε                                              (3)
+                   where T is the correlation time, wε is the corresponding process noise vector, and δg is the gravity
+                   uncertainty error vector, projected as:
+                                                          δg = diag−ω2−ω2 2ω2)δr                                            (4)
+                                                                          s     s    s
+                                                                                                                  
+                                                                                       GLDJ                    
+                                                                                                    V       V      V
+                                       V
+                          Sensors 2018, 18, 3809                                                                                                                     4of22
+                          whereω denotestheSchulerfrequency[43–47]. Subscriptbindicatesthebodyframe(b-frame)with
+                                      s                                                              Q
+                                                                                                     E
+                          vehicle axes, i.e., forward–transversal–down. Subscript n indicates the navigation frame (n-frame) is a
+                          local geodetic frame with the x-axis towards geodetic north, the z-axis towards an orthogonal to the
+                          reference ellipsoid pointing down, and the y-axis completing a right-handed orthogonal frame, i.e.,
+                                                                 n
+                          north–east–down(NED).C isthedirectioncosinematrix(DCM)fromthebodyframetothen-frame.
+                                                                 b
+                                 In this research, an INS error with 21 states was developed according to the equations mentioned
+                                                                                                                        7
+                          above. Nine navigation parameters expressed in the n-frame, and 12 inertial sensor error parameters
+                                                                                                 ȥ             
+                                                                                                         J   D   J   D
+                          expressed in the b-frame, are involved. The complete error state sequence is expressed as:
+                                                                                δx = (δr δv ψ b b s s )T                                                                 (5)
+                                                                                                       g a g a
+                          2.2. Measurement Model
+                                 Figure 1 illustrates the physical location relationship between the IMU and GNSS rover with two
+                          antennas (Ant 1 and Ant 2) in the b-frame.
+                                                                                           l
+                                                                                             
+                                                                  l                     l
+                                                                                          
+                                                                    
+                                 Figure 1. Physical-location relationship between the inertial measurement unit (IMU) and two Global
+                                 Navigation Satellite System (GNSS) receiver antennas in the body frame.
+                                 Where li is the level arm vector between the IMU and i-th antenna, while l12 is the level arm
+                          vector between the two antennas, and can be expressed as:
+                                                                                                                                        
+                                                                                           l   =l2−l                                                                     (6)
+                                                                                            12             1
+                                                                                                        
+                                                                                                                   43]:
+                                 Thelinearized position error measurement equation is [
+                                                                                                    Q                Q
+                                                                                                  n                  n
+                                                                                                                        ȥ
+                                                               ∆Zr = r           −r         +C l =δr+(C l ×)ψ−e                                                          (7)
+                                                                           IMU       GPS1            1                  1            e
+                                                                                 ,08     *36      E                E               r
+                                                                                                  b                  b
+                                                                                                                                      1
+                          where∆denotesthedifferencebetweenmeasurementsandpredictions. Thelinearizedvelocityerror
+                          measurementequationis[43]:
+                                                                     Q    E                  Q
+                                                                   Ȧ  Ȧ                          
+                                                         n     b                       n
+                                                          ,08       E               LQ      E      *36
+                              ∆Zv = (v            +(C (ω ×)−(ω ×))C l −v                                )
+                                            IMU          b                   in        b 1       GPS1                                                                    (8)
+                                                                         Q            Q          E             Q                Q                E
+                                                               n                n            b                 n                  n                    b
+                                                             Ȧ                          Ȧ  ȥ                             GLDJȦ 
+                                      =δv−((ω ×)C (l ×)+C ((l ×ω )×))ψ+C (l ×)b +C (l ×)diag(ω )s −e
+                                                                                                                                                           
+                                                       in         LQ     E           E                       E         g    E                          g
+                                                                    1                1                             1                  1                           e
+                                                               b                b                              b                  b                              v1
+                          where•            and•          indicate that the corresponding vectors are obtained by the INS mechanization
+                                        ,08               *36
+                                      IMU           GPS
+                          algorithm and GPS-RTK algorithm, respectively. (•×) denotes the skew symmetric matrix form of
+                                                                                                                              
+                          avector. e        ande arethecorrespondingmeasurementwhite-noisevectors. ω istherotationrate
+                                         e          e                                                                                          in
+                                         r1         v1
+                          vector, and is expressed as:
+                                                                                       ω =ω +ω                                                                          (9)
+                                                                                          in        ie       en
+                 Sensors 2018, 18, 3809                                                                  5of22
+                     AccordingtoEquation(7),anotherpositionerrormeasurementequationrelatedtoRover2can
+                 beconstructed as follows:
+                                                               n           n
+                                        ∆Zr = r     −r     +C l =δr+(C l ×)ψ−e                             (10)
+                                                IMU    GPS2     2            2       e
+                                                               b           b         r2
+                 wheree isthecorrespondingmeasurementwhitenoisevector.
+                        e
+                        r2
+                     l12 has already been accurately calibrated in the b-frame and is considered as a constraint
+                 that can be used for fast AR ﬁxing, even for a low-cost single-frequency receiver. Assume that
+                                                  e
+                 the two-antenna baseline vector p  in the earth frame (e-frame) can be accurately estimated by
+                                                  12
+                 moving-reference-receiver GPS-RTK processing that a method used to determine relative position
+                 vector between the antennas mounted to a single platform. Then, the attitude error measurement
+                 equation can be constructed using the difference between Equations (7) and (10):
+                                                       n                     n
+                                        ∆Zψ =r     +C l −r       −(r     +C l −r       )
+                                               IMU     b 1   GPS1    IMU     b 2   GPS2
+                                                n       n e                                                (11)
+                                             =C l −C p
+                                                b 12    e 12
+                                                 n
+                                             =(C l ×)ψ−e
+                                                   12        e
+                                                 b           r12
+                                                                                  n
+                 wheree   is the differential measurement white-noise sequence, and C is the DCM from the e-frame
+                        e
+                        r12                                                       e
+                 to the n-frame.
+                     Consequently, the ninth-order measurement error model of the proposed two-antenna GPS/INS
+                 integration is given by:
+                                                         ∆Z=Hδx+e                                          (12)
+                 where∆Zisthemeasurementvector,HisthemeasurementmatrixcalculatedbasedonEquations(7),
+                 (8), and (11), e is the measurement white-noise sequence and, determined by GPS/RTKs, results in
+                 error variance that reﬂects measurement uncertainty.
+                   ∆Z=∆Zr∆Zv∆ZψT
+                     e = e  e  e  T
+                           e  e  e
+                         r1 v1 r12                                                                    
+                                                n                                                          (13)
+                           I    0              C (l ×)                  0      0          0          0
+                          3                    b 1                                                    
+                    H=                     n          n       b       n             n            b
+                          0 I     (ω ×)C (l ×)+C ((l ×ω )×) C (l ×) 0 C l ×)diag(ω ) 0 
+                                3     in   b 1        b  1            b 1           b 1
+                                                n
+                            0   0              C (l ×)                  0      0          0          0
+                                                b 12
+                 whereI isthethird-orderunitmatrix,0isthird-order zero matrix.
+                        3
+                 3. Adaptive Noise Covariance
+                     Asnotedintheintroduction,KFshavebeenwidelyusedindatafusion,andtheirperformance
+                 relies on the accuracy of the dynamic and measurement models, and the statistical accuracy of the
+                 noise covariance (Q and R). Fortunately, Q and R can still be adjusted to reﬂect the actual uncertainties
+                 of state estimation in the long term.
+                     Theinitial state error covariance matrix reﬂects the initial state-ﬁltering accuracy, with little effect
+                 onthesubsequentﬁlterupdating. TheweightbetweenQandRdeterminestheKalmangain,which
+                 directly determines the impact that Q and R have on the state estimation. Therefore, the focus of the
+                 noise covariance reconstruction is partially shifted toward Q and R.
+                 3.1. Adaptive Process Noise Covariance
+                     Process noise covariance Q should be adjusted by the ﬁlter algorithm as it cannot be easily
+                 controlled directly unless adaptive factor α is used to tune the predicted state covariance. P− can be
+                 expressed as [26]:
+                                                       −        ˆ T
+                                                      P =α(ΦPΦ +Qt)                                        (14)
+                  Sensors 2018, 18, 3809                                                                            6of22
+                  where Φ denotes the state-transition matrix computed from the INS dynamic system, t is the
+                                           ˆ                                                                −
+                  discretization time, and P is the previous measurement updated state covariance. •ˆ and •   denotesthe
+                  measurementupdatedparameterandpredictedparameter,respectively. α isascalarvalue,updated
+                                                                                                                       ˆ
+                  basedontheweightbetweenthecovariancematrixofthepredictedresidualvector,denotedasCξ,
+                                                                                                            ˆ
+                  andthetheoretical covariance matrix of the predicted residual vector, denoted as Cξ. Cξ and Cξ are
+                  expressed as [26]:
+                                                                      − T
+                                                             Cξ = HP H +R                                             (15)
+                                                             ˆ      T
+                                                             Cξ = ξ ξ
+                  whereξ is the innovation sequence and expressed as [
+                                                                          25]:
+                                                               ξ = Z−Hδx−                                             (16)
+                  withpredicted state sequence δx−.
+                       BasedontheKalmanﬁlterprinciple,Cξ reﬂectspredictedmeasurementerrorandtheoretically
+                             ˆ
+                  equals to Cξ in an ideal case (accurate dynamic model and measurement model, and their noise
+                  statistics) [26]. Assume measurements are measured without outliers and their noise probability
+                  density functions are accurate.
+                                   ˆ
+                       Let γ = tr(Cξ)/tr(Cξ), tr(•) denotes the trace of a matrix. The adaptive function to determine
+                  the adaptive factors is expressed as [25,26]:
+                                                                ( 1.0, γ ≤ c
+                                                            α =               0                                       (17)
+                                                                    1 γ, c ≤ γ
+                                                                   c0    0
+                  where c0 is the corresponding empirical constant, which is typically equal to 1.5–2.0 according to
+                  Reference [25].
+                       Undertheconditionofaccuratemeasurementsoraccuratenoisestatistics,theKFtimeupdating
+                  tends to be unstable when α > 1.0. P− is perturbed due to the dynamic model errors and should be
+                  tunedlarger using α to ensure that P− closely reﬂects the actual situation.
+                  3.2. Adaptive Measurement Noise Covariance
+                       Adaptivemodiﬁcationofthenoisecovarianceisatradeoffbetweentheconvergencerateandﬁlter
+                  stability. The ﬁlter error propagation reﬂects the accuracy of the state estimations to some degree. In an
+                  idealKFapplication,tuningthenoisemodelstoyieldconsistentestimationerrorsanduncertaintiescan
+                  also produce stable state estimates that track their true counterparts [46]. α makes P− larger, and thus
+                  causes the ﬁlter gain value to increase, which increases the contribution of themeasurement outliers.
+                  Measurementoutlier δξ can be considered as the unknown or unidentiﬁed uncertainty contained in
+                  the innovation:
+                                                                 e
+                                                                 ξ = ξ +δξ                                            (18)
+                       AccordingtoEquation(17),predictedstateerrorpropagationP− canbeincreased βtimeswithout
+                  δξ, or inaccurately increased by α times with δξ and
+                                                            (ξ+δξ)T(ξ+δξ)  ξTξ
+                                                       β =     tr(C )   /tr(C )
+                                                                   ξ         ξ                                        (19)
+                                                        =1+(2δξTξ+δξTδξ)/ξTξ
+                       In the measurement updating procedure, Kalman gain K is calculated by [47,48]:
+                                                              − T      − T        −1
+                                                        K=P H (HP H +R)                                               (20)
+                   Sensors 2018, 18, 3809                                                                               7of22
+                        Themeasurementupdatingofthestateestimateδxˆ isformulatedasfollows:
+                                                              −     e      −
+                                                      δxˆ = δx  +Kξ=δx +K(ξ+δξ)                                          (21)
+                        Alarge proportion of the perturbations in the measurement is fed back to the state estimates
+                   because the corresponding gain value can be close to 1.0, subject to the large error magnitude of P−.
+                        If extreme measurement outliers occur, δξ tends to be extremely large. Then,
+                                                                  δξTδξ
+                                                            |      − T         →∞                                        (22)
+                                                             tr HP H +R)
+                        Compared to the uncorrected R, ξ contains large-magnitude errors. Therefore, α tends to be
+                                                                                                                            e
+                   extremely large. For a more intuitive analysis of the disadvantage of large measurement errors in ξ,
+                   weassumethatαcanbeconsideredtotendtoinﬁnity. BasedonL’Hôpital’srule[49],thecorresponding
+                   Kalmangaincanbederivedas:
+                                               lim K = limK
+                                              δv→ε      α→∞
+                                                               − T        − T       −1
+                                                     = limαP H (HαP H +R)
+                                                        α→∞                                                              (23)
+                                                              − T               − T            −1
+                                                     =[∂(αP H )/∂α][∂(HαP H +R)/∂α]
+                                                          − T      − T −1
+                                                     =P H (HP H )
+                                                                           − T
+                        AccordingtoEquation(13),everyblockoftheHP H matrixconsistsofthelineartransformation
+                   of skew-symmetric matrices, the determination of which equals to 0. Therefore, ﬁlter crashes can
+                   be produced due to singular-matrix inversion in the portion of the Kalman gain. This case rarely
+                   exists in general because the determination of R doesn’t equals to 0 and numerical issues cannot be
+                   causedwhenprocessingmatrixinversioninEquation(23). However,whenthemeasurementoutlier
+                   magnitudeismuchlargerthanthemagnitudeofR,thecontributionofRingaincalculationcanbe
+                   degraded, even ignored, and positive feedback, ﬁlter divergence, even the numerical problem still
+                   exist. Small errors in P− are relatively harmless; however, Equation (13) demonstrates that large
+                   P−-matrixerrors distort the Kalman gain matrix. R is often tuned by assigning state uncertainties that
+                   are substantially larger to an extent that nearly equivalent to ξξT, and the modiﬁed measurement noise
+                   covariance that contains unknown uncertainties R can be expressed as:
+                                                             R=(ς+ρ)(ς+ρ)T                                               (24)
+                   wheresequenceςindicatestheinaccuratestatisticaluncertainty,andisempiricallysmallerthantheactual
+                   measurementuncertainties. Thesequenceρrepresentstheunknownmeasurementuncertainties,which
+                   are assumedtoapproximatelycorrespondwiththeactualoutliers. Thus,theadaptivefactoris:
+                                                      γ     1       ξTξ +2δξTξ+δξTδξ
+                                                α = c = c tr(HP−HT)+ςTς+2ςTρ+ρTρ                                         (25)
+                                                      0     0
+                        If the hypothesis of Equation (22) is established, L’Hôpital’s rule can be used to determine α, and it
+                   turns out that:
+                                          γ     1       ∂(ξTξ +2δξTξ+δξTδξ)                1 ||ξ||2+|δξ||
+                                     α =     =                                          =                 2              (26)
+                                          c     c          − T       T      T      T       c ||ς|| +||ρ||
+                                           0     0 ∂(tr(HP H )+ς ς+2ς ρ+ρ ρ)                0     2       2
+                   where||•||2 indicates two norms of a vector.
+                        Duetotheintroductionof ρ, the contribution of measurement outliers is almost reduced with
+                   respect to α and P− afterwards. P− reﬂects the relatively precise uncertainty of the predicted
+                   state estimates and cannot be extremely large. Therefore, L’Hôpital’s rule cannot be used in the
+                    Sensors 2018, 18, 3809                                                                                      8of22
+                                                                                                                    − T        −1
+                    implementationofEquation(23),numericalissuesconcerningtheinversionof (αHP H +R)                               are
+                    resolved, and the impact of positive feedback is attenuated because of the consideration of unknown
+                    measurementuncertainties in the Kalman gain determination. However, ρ is hard to be separated out;
+                    the most popular robust method in IAE is to tune α further by using an adaptive robust function that
+                    is expressed as [26]:                     
+                                                                       1.0      ,  γ≤c0
+                                                         α =  γ ×(c1−c0),        c ≤γ≤c                                          (27)
+                                                                  c      c −γ       0          1
+                                                               0       c1
+                                                                        1      ,   c ≤γ
+                                                                         γ           1
+                    wherec isthecorrespondingempiricalconstant,whichistypicallyequalto4.5–8.5[50].
+                             1
+                          Unfortunately, some drawbacks still exist for the following reasons:
+                    •     When tuning a Kalman ﬁlter, unknown uncertainties cannot be easily separated from the
+                          measurementnoise. Although ﬁlter stability is ensured by assigning substantially larger state
+                          uncertainties, subjective assumption is introduced.
+                    •     The performance of measurement error equations in INS calibration is weakened when the
+                          measurementisinthesteadystateandcannotcontinuallyprovidehigh-accuracypositioningand
+                         velocity results. Due to dynamic model errors and self-drawbacks of INS mechanization, INS
+                          cannot provide accurate state prediction. Due to low-accuracy a priori solutions or GPS outages,
+                          γmaybealsoextremelylargeevenwithoutameasurementoutlierbecauseEquation(27)cannot
+                          ﬁgure out the source of larger innovation deviation. Therefore, α can be less than 1.0, and the
+                          impactofP− matrixerrorisincreased. AccordingtoEquations(21)and(23),asmallP− matrix
+                          error produces unresponsive state estimates, while P− of a too-large error magnitude produces
+                          unstable, oscillatory state estimates [51].
+                          The contributions of P− and R determine the impact of dynamic and measurement models
+                    onthestate estimation, respectively. Following Equations (17) and (27), the adaptive modiﬁcation
+                    of P− relies on R, which demonstrates that focus should be placed on the measurement outlier
+                    detection and feedback. Hence, Figure 2 illustrates the proposed algorithm used to determine the
+                    ρ in Equation (24). In the two-antenna GPS/INS-integrated navigation application, the original
+                    Ris modiﬁed based on ﬁlter measurement-updated covariance-solution processing by GPS-RTK,
+                    and reﬂects the ﬁlter accuracy of the GPS-RTK solution in detail (δer                 ∈ ℜ3×1, δve        ∈ ℜ3×1,
+                                                                                                     GPS               GPS
+                    andδpe      ∈ℜ3×1). ρ ∈ ℜ3×1 is designed based on the position dilution of precision (PDOP) value,
+                            GPS
+                    numberofvaluable satellites (Nsat), AR ratio and length bias (dl) of pe             which can be obtained by
+                                                                                                     12
+                    GPS-RTKprocessing. These parameters can objectively reﬂect the quality of RTK solutions, which
+                    also improves for the modiﬁcation of measurement noise covariance matrix and the determination of
+                    adaptive factors. To tune the measurement noise covariance matrix such that it closely aligns with the
+                    actual error magnitudes, the modiﬁed R is given by:
+                                                                                 T
+                                                                       R=E[ee ]                                                   (28)
+                                                 e = diag[(δer     +ρ)(δve        +ρ )(δpe       +ρ )]T
+                                                               GPS     r     GPS      v      GPS     pe
+                    whereρr = [ρr ρr ρr]T, ρv = [ρv ρv ρv]T and ρpe = ρpe ρpe ρpeT.
+                          Theboundeddl(< ∆)isgivenby:
+                                                                  dl =||pe  ||2−||l   ||                                          (29)
+                                                                          12       12 2
+                          Figure 2 shows the algorithm to adaptively modify the measurement noise covariance matrix.
+                    Thefactors(κ,µ,γ,η)presentedintheﬁgurecanquantifyGPS-RTKreliabilityindetailtoappropriately
+                    tune the measurement noise covariance matrix.
+                                                                              7
+                                                                          >     @
+                                                                                                 7
+                                                                                     
+                                                       GLDJ>       ȡ         ȡ           @
+                                                                                               
+                                                               *36         *36          *36
+                                                                                    7
+                                          7                 7
+                                                                     ȡ  >        @
+                            ȡ  >       @   ȡ  >       @
+                                                                               
+                                              
+                                                                       
+                                                                     __   __   __  __
+                                                                               
+                                                                      瀌澳
+                                       
+                   Sensors 2018, 18, 3809                                                                                9of22
+                                             PDOP                      Ratio                      Nsat
+                                 κPDOP−                   γ−Ratio                µ− Nsat
+                                                                                              ρr ρv
+                                                                                                ρ
+                                                                                                    
+                                                                                                   p
+                                      η_dl_
+                                               <∆
+                                              _ dl _                                  ≤κµγη ≤ 
+                                                                                                                    
+                        Figure 2. A quantiﬁcation algorithm of Global Positioning System (GPS)-RTK reliability used in
+                        Equation(28) based on PDOP, numberofvaluablesatellites, ratio, and length bias.
+                        According to Figure 2, the adaptive measurement noise covariance matrix reconﬁguration
+                   algorithm is formulated as the following equation. The algorithm is used to determine the driving
+                   state or measurement reliability based on the quantiﬁcation results (ρr, ρv and ρpe), which can be equal
+                                                                                                             
+                                                                                                             p
+                   or close to 0 when the GPS-RTK solution is reliable. Otherwise, state uncertainties larger than 1δ
+                                                                                                                            
+                   can occur in the instance when the measurement is less reliable. The factors mentioned in Figure 2,
+                   like PDOP and ratio, are directly related to positioning performance [52–56]; hence, the proposed
+                   measurementnoisecovariancematrixremodiﬁcationmethodismorefeasibleandﬂexiblecompared
+                   withtheadaptiverobustmethodinEquation(27).
+                                             ρ ,ρ = κ(PDOP−3)+γ(3−Ratio)+µ(6−Nsat)
+                                              r   v                                                           (30)
+                                                ρep = ηdl_   _
+                                                      
+                        In summary,theoverallﬂowchartofthetwo-antennaGPS/INSintegrationalgorithmisshown
+                   in Figure 3. The IMU outputs are processed by the INS mechanization algorithm into navigation
+                                                                                                                  n
+                   parameters,includingposition,velocity,attitudevectors,andthederivedbaselinevectorC l12 between
+                                                                                                                 b
+                   thetwoantennas. TwoGPS-RTKprocessingschemeswereadoptedtoestimatethepositionandvelocity
+                                                                                   n
+                   vectors of Rover 1 and the two-antenna baseline vector p . In this research, the implementation
+                                                                                   12
+                   involves a ﬁlter based on the proposed approach.

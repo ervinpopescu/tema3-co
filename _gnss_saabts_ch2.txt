@@ -1,0 +1,375 @@
+       Appl. Sci. 2022, 12, 6255                                                                   2of12
+                               ofsparsesignalsandfaithfullyreconstructtheoriginalsignalsbackfromfewercompressive
+                               measurements. It has been applied in many ﬁelds, including speech enhancement [14],
+                               magnetic resonance imaging [15], wireless sensor network [16], etc. Moreover, several
+                               CS-basedmethodshavebeenproposedforGNSSsignalacquisition. Heetal.[17]usedthe
+                               sparse matrix to compress the spread spectrum signal and reconstructed the compressed
+                               signal based on the greedy algorithm. Kong et al. [18] proposed two-stage compression
+                               of GNSS signal by the Walsh–Hadamard matrix, which achieved fast acquisition with
+                               fewer correlators than traditional acquisition methods. Chang et al. [19] combined CS
+                               with subspace to enhance the acquisition performance of GNSS signal when there are a
+                               lot of interferences. He et al. [20] designed a sparse dictionary based on the features of the
+                               GLONASSnavigationsignalandmodiﬁedthegreedyreconstructionalgorithmtoachieve
+                               fast acquisition. However, the above algorithms are based on the conventional frequency
+                               search methodwithaﬁxedbandwidth,whichresultsinlowacquisitionprobabilitiesunder
+                               highdynamicconditions.
+                                   In this paper, a GNSS signal acquisition algorithm based on two-stage compression
+                               of the code-frequency domain is proposed, which divides the Doppler frequency offset
+                               into multiple intervals, and the multiple frequency points are compressed and searched
+                               in every interval at the same time to increase the correlation bandwidth. This method can
+                               overcomethelimitations of the conventional Doppler frequency search and is suitable for
+                               fast acquisition in high dynamics.
+                                   The rest of this paper is organized as follows. Section 2 introduces the compres-
+                               sion acquisition theory and the problems of the compression acquisition algorithm in a
+                               highly dynamic environment. Section 3 proposes the model of two-stage compression and
+                               theoretically analyzes the advantages of the proposed method, including computational
+                               complexity and detection probability. Section 4 compares the performance of the proposed
+                               algorithm with other acquisition algorithms and discusses the performance with different
+                               keyparameters. Section 5 concludes this paper.
+                               2. Code-DomainCompressionAcquisitionAlgorithm
+                               2.1. Sparsiﬁcation of GNSS Signal
+                                   Theincomingdigitaldown-convertedGNSSintermediatefrequency(IF)signalcanbe
+                               expressed as [21]
+                                            r(n) = Ad(n)c(n−τ)exp[j(2π(f + f )nT +ϕ)]+v(n)           (1)
+                                                                       IF  d   s
+                               where A is the signal amplitude, d is the signal data, c is the spreading code, fIF is the
+                               intermediate frequency, f is the Doppler frequency offset, T is the sampling interval, τ is
+                                                   d                           s
+                               the code phase, v is the noise, and ϕ is the unknown carrier phase.
+                                   From the previous work, we know GNSS signal acquisition is possible at a low
+                               sampling rate by employing CS theory to compress the raw GNSS signal data using a
+                               measurementmatrix[22],whichcanbeexpressedas
+                                                               y = Φ·x                               (2)
+                               wherexistheoriginalsignal, y is the measurement vector, Φ ∈ RM×N is the measurement
+                               matrix, N is the signal length, M is the measurement length, and M << N.
+                                   ThepremiseofCSisthatthesignalissparse. However,mostoftherealsignalsare
+                               not sparse but can be expressed as
+                                                               x = Ψ·a                               (3)
+                               whereΨiscalledthesparsebasisofthesignal,aisasparsevector.
+                                   Shifting the spreading code vector c = [c(0),c(1),··· ,c(NK −1)] ∈ RNK×1 to get the
+                               codematrixC
+        Appl. Sci. 2022, 12, 6255                                                                                       3of12
+                                                                     c(0)            c(1)        · · ·  c(2K−1)       
+                                                                     c(K)          c(K+1)        · · ·  c(3K−1)       
+                                        C=[c ,c ,··· ,c      ]=                                                        (4)
+                                               0  1      N−1           .              .          .           .        
+                                                                       .              .           ..         .        
+                                                                        .              .                      .
+                                                                  c[(N −1)K] c[(N−1)K+1] ··· c[(N+1)K−1]
+                                      where N is the amount of points in the FFT, and N = 2K.
+                                          Paddingzerostotheendoftheincomingsignalr(n)toincreaseitslengthto2K,which
+                                      can solve the problem of non-periodicity after block processing of spreading code and
+                                      reduce computation effectively [23]. It can be described as
+                                                                r = [r(0),r(1),··· ,r(K −1),0    ]T                        (5)
+                                                                                             1×K
+                                          Then,correlating the padded signal vector r with the local spreading code matrix C,
+                                      wecanobtainthecorrelationvectorX
+                                                                             X=C·r                                         (6)
+                                          Theacorrelation function (CF) of the incoming signal and the spreading code can be
+                                      described as
+                                                                 2K−1             ( v+2AK1−|τ|, |τ|≤T
+                                                                                                   T            c
+                                                Xi =<cn,r >= ∑ c(i+n)r(i)=                          c                      (7)
+                                                                                             v,          |τ| > T
+                                                                 i=0                                            c
+                                      whereXi istheithelementofthecorrelationvectorX,cn isthenthrowofthecodematrixC,
+                                      <·>isthediscrete-timeconvolutionoperation, T isthechiptime,2AK isthemaximum
+                                                                                       c
+                                      peakvalue.
+                                          AsshowninFigure1,thecorrelationresultXcanbeconsideredsparseif|2AK| >> |v|
+                                      in Equation (7).
+                                                    
+                                                         
+                                                               
+                                                                       	
+                                                       
+
+                                                                 
+                                      Figure 1. Model of correlation output.
+                                      2.2. Code-Domain Compression Acquisition
+                                          According to Equations (2) and (6), we can use the measurement matrix Φ to com-
+                                      presses the N ×1 dimensional correlation result X to obtain the M×1 dimensional mea-
+                                      surementdataY
+                                                                 Y = Φ · X = Φ · C · r                                     (8)
+                                                                M×1    M×N N×1     M×N N×2K 2K×1
+                                          ThemeasurementmatrixΦwillbehelpfulforsignalreconstructionwhenrestricted
+                                      isometry property (RIP) criteria is satisﬁed. In other words, each column is a unit vector,
+                                      andthesumofsquaresofallcolumnsmeetstheWelchbound[24,25]
+                                                                       N N 
+       2   N2
+                                                                              φ ,φ  ≥                                    (9)
+                                                                       ∑∑ i j             M
+                                                                       i=1j=1
+                                          The FFT-based parallel search engine is adopted to acquire the correlation peak,
+                                      whichconvertstime-domainconvolutionoperationintofrequency-domainmultiplication.
+            Appl. Sci. 2022, 12, 6255                                                                                                                                         4of12
+                                                      TheFFTofΦ·CaretakenandmultipliedbytheFFTofther,andthentakentheinverse
+                                                      FFT(IFFT)toobtainY.
+                                                             The correlation result X can be reconstructed from Y through some reconstruction
+                                                      algorithms, which can be described as follows
+                                                                                                 minkXk0            s.t.     Y=Φ·X                                              (10)
+                                                      wherek ·k0 meansthe l0 normwhichcountsthenumberofnonzeroelements.
+                                                             Thel0 normisaNP-hardproblem,whichcanbeconvertedintol2 normifthemea-
+                                                      surementmatrix ΦmeetstheRIPcondition.
+                                                                                                minkXk2              s.t.     Y=Φ·X                                             (11)
+                                                                                                              2
+                                                      wherek ·k2 is the l2 norm, also known as the Euclidean norm, which is used as a standard
+                                                      quantity for measuring a vector difference [26].
+                                                             Theleast square method (LSM) is used to reconstruct the elements from the measure-
+                                                      mentdataY[27].
+                                                                                                        X=ΦT(ΦΦT)−1Y                                                            (12)
+                                                             ThecorrectcodephaseandDopplerfrequencyoffsetaredeterminedbycomparing
+                                                      the ﬁrst K elements from the correlation result X. Replacing the circular correlation with a
+                                                      compressedreconstruction in this method decreases the number of correlators from N +1
+                                                      to M+1[28].
+                                                             Asweknow,thecorrelationfunction R(τ, fd) of the spreading code can be described
+                                                      as follows [29]
+                                                                                                          |τ|sin[π(f − f )2KT ]
+                                                                             R(τ, f ) = 2AK 1−                               d      i       s  exp[jγ(ϕ)]                       (13)
+                                                                                     d                      T       sin[π(f − f )T ]
+                                                                                                              c                d      i   s
+                                                      whereγ(ϕ) = π(f − f )(2K−1)T +ϕ, f istheDopplerfrequencyhypothesis.
+                                                                                d      i                s         i
+                                                             WecanﬁndthatR(τ, fd)isaffectedbytheDopplerfrequencyasasinc(·)function[29],
+                                                      andthezeroofitsmainlobeislocatedat
+                                                                                                             f  =±1 +f                                                          (14)
+                                                                                                              d    KT         i
+                                                                                                                       s
+                                                             Thecorrelation bandwidth B denotes
+                                                                                                      c
+                                                                                                                B = 2                                                           (15)
+                                                                                                                  c   KT
+                                                                                                                          s
+                                                             HencetheDopplerfrequencyoffsetrangeineachsearchisobtainedas
+                                                                                                    fd ∈  −1 + fi, 1 + fi                                                     (16)
+                                                                                                             KT           KT
+                                                                                                                 s            s
+                                                      wherethesearchaccuracyis1/(KT ).
+                                                                                                        s
+                                                             In above algorithm, the acquisition is serial in the frequency domain, and it will take a
+                                                      long time to acquire the Doppler frequency in high dynamics.
+                                                      3. Code-FrequencyTwo-StageCompressionAcquisition
+                                                             In this section, we introduce a new frequency domain compression to preprocess the
+                                                      incomingsignaltoreducetheinﬂuenceoflargeDopplerfrequencyoffset.
+                                                      3.1. Frequency Domain Compression Preprocessing
+                                                             The incoming signal is multiplied with exp[j2π(fi + fl)] to produce the mapped
+                                                                                                                                      o      c
+                                                      signal r′(n)
+                                                                 l
+                                                                                              r′(n) = r(n)exp[j2π(fi + fl)nT ]                                                  (17)
+                                                                                               l                              o      c     s
+           Appl. Sci. 2022, 12, 6255                                                                                                                            5of12
+                                                  where fl is the multiple carrier frequency bins, l ∈ {0,1,2,...,L −1}, L is the frequency
+                                                            c
+                                                  compression ratio (FCR), the frequency search step fstep=fl+1−fl, fi is the starting fre-
+                                                                                                                                 c       c   o
+                                                  quency in once frequency compression search, i ∈ {0,1,2,...,I −1}, I is the number of
+                                                  sub-carrier bins, the frequency compression steps fi+1−fi=L· fstep.
+                                                                                                                     o       o
+                                                        HencetheDopplerfrequencyoffsetcanbeexpressedas
+                                                                                                   fd = I · L · fstep                                             (18)
+                                                        Figure 2 shows the process of the mapping and overlapping-based carrier frequency
+                                                  searchingtechnique. WedividetheDopplerfrequencyoffset fd into I sub-carrierfrequency
+                                                  bins and search for L sub-frequency points separated by fstep simultaneously.
+                                                                                             
+                                                                                                                       
+                                                                                              
+                                                                     	     	                               	       	
+                                                                                                                                       
+                                                                               
+                                                                                                                                 
+                                                                          
+                                                                                                                                      
+                                                                              
+                                                                                                 
+                                                     
+                                                                                                      
+                                                       
+
+                                                                                             
+                                                                                                                       
+                                                                                              
+                                                                     	     	                               	       	
+                                                                             
+                                                                                                                                     
+                                                                          
+                                                                                                                                 
+                                                                              
+                                                                                                                                      
+                                                  Figure 2. Schematic diagram of frequency domain compression processing.
+                                                        FromEquation(13),wecanseethatiftheDopplerfrequencyisgreaterthanthecorre-
+                                                  lation bandwidth B = 2/(KT ), the correlation value is attenuated seriously. Accordingly,
+                                                                           c             s
+                                                  the frequency search step should satisfy f                ≤B/2,makingsureatleasttwoneighboring
+                                                                                                       step      c
+                                                  acquisition frequency points are located within the correlation bandwidth B , which is
+                                                                                                                                                         c
+                                                  beneﬁcial to enhancing the acquisition performance, as shown in Figure 3a. However,
+                                                  if f      > B , the neighbor acquisition frequency exceeds the correlation bandwidth B ,
+                                                      step       c                                                                                                   c
+                                                  causingthecorrelationvaluedecreaseandtheacquisitionfailure,asillustratedinFigure3b.
+                                                        Then,themappedsignalswhichcorrespondtothesamecodephaseareoverlapped
+                                                  together. Consequently, we obtain the preprocessed incoming signal
+                                                                                                            L−1
+                                                                                                 r′′(n) = ∑ r′(n)                                                 (19)
+                                                                                                  l               l
+                                                                                                             l=0
+                                                        Thecorrelation bandwidthofthecomprssionacquisitionisimprovedbyfrequency
+                                                  domainpreprocessing,whichcanbeexpressedas
+                                                                                              B′ = (L−1)f            +B                                           (20)
+                                                                                                c               step      c
+                                                        Comparedwiththetraditional Doppler frequency search method, the L frequency
+                                                  bins are searched simultaneously in this method, which can reduce search number and
+                                                  acquisition time.
+         Appl. Sci. 2022, 12, 6255                                                                                           6of12
+                                                                                                                                             
+                                                                                              
+                                                                     
+                             
+                                                                                                                                               
+                                                                                                
+                                                                      
+                               
+                                
+                                                        
+                                                                                                 
+                                                                                                                               
+                                 
+                                                         
+                                                                                                  
+                                                                                                                                
+                                                        (a)                                (b)
+                                       Figure3. Therelationshipbetweenfrequencysearchstepandcorrelationbandwidth: (a) f    ≤B/2;
+                                                                                                                       step    c
+                                       (b) f   >B.
+                                           step   c
+                                       3.2. Algorithm Process
+                                            Thedetailed and straightforward processes of proposed GNSS acquisition algorithm
+                                       are showninAlgorithm1andFigure4.
+                                       Algorithm1TheproposedGNSSacquisitionalgorithm.
+                                       Input: Incoming signal, r(n); Spreading code vector, c ; Measurement matrix, Φ; Decision
+                                                                                              0
+                                           threshold, V;
+                                                       t
+                                       Output: Codephase,τ;Dopplerfrequencyoffset, fd;
+                                        1: Mappingincomingsignalr(n) todifferent carrier frequencies fi;
+                                                                                                           o    ′′
+                                        2: Overlapping the mapped signals to the same code phase to obtain rl (n);
+                                        3: Padding zeros to the end of the mapped signals r′′(n) to form a signal vector r′′;
+                                                                                             l
+                                        4: Shifting spreading code vector c to obtain the code matrix C;
+                                                                            0
+                                        5: Performing FFT operation to ﬁnd out the measurement data Y;
+                                        6: Using the greedy algorithm to obtain the correlation result X;
+                                        7: Comparingtheﬁrst K elementsfromthecorrelationresultXwiththethresholdV to
+                                                                                                                               t
+                                           obtain the code phase τ and Doppler shift fd;
+                                        8: return τ, fd;
+                                                               
+
+	
+
+                                             "
+
+                                                                
+
+
+                                            
+
+   
+	
+
+                                                     
+
+                                          
+
+ 	
+         
+     
+        	
+
+                                           
+ 	
+            	      	        !	
+                                               	
+	
+
+                                                                 
+	
+
+                                              
+
+
+                                       Figure 4. GNSS signal acquisition based on code-frequency compression.
+                                       3.3. Detection Probability Analysis
+                                            AssumingapartialHadamardmatrixisadoptedasmeasurementmatrixtoassessthe
+                                       performanceoftheproposedalgorithm,thefollowingtwohypothesesdeterminethetest
+                                       statistic for signal detection        
+                                                                                   Φ w       H
+                                                                        y˜ =         1         0                              (21)
+                                                                                Φ (x+w) H
+                                                                                  1            1
+                                                     (MT /α )×N
+                                       whereΦ1 ∈R        p  c     denotes a random partial Hadamard matrix, αc is the maximum
+                                       subsamplingfactor, T is the spreading spectrum period, H denotes the signal is present
+                                                             p                                      1
+        Appl. Sci. 2022, 12, 6255                                                                                      7of12
+                                     andcorrectly aligned with the local replica, H denotes the signal is absent or not correctly
+                                                                                 0
+                                     aligned with local replica.
+                                          Consequently, the probability density function of y˜ under hypothesis H is shown
+                                                                                                                  1
+                                     as follows:                                                                 
+                                               b                    1                   1     T 2     T−1
+                                           p ye | x, H =                          exp − (W) σ Φ Φ           (W)        (22)
+                                                    1          (M/α )/2         1/2                    1 1
+                                                          (2π)     c  σ2Φ1ΦT            2
+                                                                              1
+                                                       b                b
+                                     whereW=ye−Dx,D=Φ1·Ψ,andxdenotes
+                                                                        b         T −1 T
+                                                                        x = (Φ1Φ1)    Φ1y˜                               (23)
+                                               b
+                                          The x denotes the maximum likelihood estimation (MLE) of x under H , which is
+                                                                                                                  1
+                                     shownas                                     
+                                                           b       T  2     T −1    −1 T 2       T −1
+                                                           x = D (σ Φ1Φ1) D           D (σ Φ1Φ1) y˜                      (24)
+                                          If the threshold η is selected to attain the required false alarm probability, the detection
+                                     performancecanbeobtainedas
+                                                              P =Pr Γy˜ > η | H  = Q 2λ         (η)                     (25)
+                                                               d                 1      ¯
+                                                                                        χMT /α (λ)
+                                                                                           p c
+                                     whereΓ isanoncentralchi-squareddistribution with MT /α degreesoffreedom,which
+                                             y˜                                               p   c
+                                     is expressed as
+                                                   Γy˜ = y˜T(σ2Φ1ΦT)−1DDT(σ2Φ1ΦT)−1D−1DT(σ2Φ1ΦT)−1y˜                   (26)
+                                                                  1                  1                    1
+                                     whereλisanon-centralityparameterspeciﬁedby
+                                                                 λ = σ−2(xT)−1ΦTΦ1ΦT−1Φ1x                              (27)
+                                                                                 1      1
+                                     3.4. Complexity Analysis
+                                          The complexity of the proposed algorithm consists of three parts: frequency do-
+                                     maincompression preprocessing, code domain compression, and signal reconstruction,
+                                     of which the ﬁrst and third are the main parts, and the second part can be ignored as
+                                     the elements of the measurement matrix are −1 or 1. In this paper, we chose the orthog-
+                                     onal matching pursuit (OMP) algorithm for signal reconstruction, whose complexity is
+                                     O(N·(log (N))2)[30,31]. Table1givesthecomplexitiesoftheserialacquisitionalgorithm,
+                                               2
+                                     the PMF-FFTacquisition algorithm, the code-compression (CC) acquisition algorithm [26]
+                                     andtheproposedcode-frequencycompression(CFC)acquisitionalgorithm.
+                                     Table1. Table of algorithm complexities.
+                                                 Acquisition Algorithm                           Complexity
+                                               Serial acquisition algorithm                      O(N2·I·L)
+                                             PMF-FFTacquisitionalgorithm                    O(N·(L·log (L)+N))
+                                                                                                        2  2
+                                                CCacquisitionalgorithm                      O(N·(log (N)) ·I·L)
+                                                                                                     2      2
+                                                CFCacquisitionalgorithm                       O(N·(log (N)) ·I)
+                                                                                                       2
+                                     4. Simulation Results
+                                          TheGPSL1signalisadoptedtoevaluatetheperformanceoftheproposedmethod.
+                                     Set the data rate Rb = 50 bps, the code rate Rc = 1.023 Mcps, the sampling rate fs = 2Rc,
+                                     the code phase τ = 400, the code length N = 1024, the measured length M = 768, and the
+                                     Dopplerfrequencyoffsetrangeis±80KHz.
