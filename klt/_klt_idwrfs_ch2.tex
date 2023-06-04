@@ -1,0 +1,301 @@
+\documentclass[12pt]{report}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{array}
+\usepackage{babel}
+\usepackage{caption}
+\usepackage{color}
+\usepackage{float}
+\usepackage{fullpage}
+\usepackage{graphicx}
+\usepackage{parskip}
+\usepackage{physics}
+\captionsetup{justification=centering}
+\author{Ervin Popescu}
+\title{KLT vs FT}
+\date{}
+\makeatletter
+% detach \eqref and \tag making
+\renewcommand{\eqref}[1]{\textup{\eqreftagform@{\ref{#1}}}}
+\let\eqreftagform@\tagform@\def\tagform@#1{
+  \maketag@@@{\color{red} (\ignorespaces#1\unskip\@@italiccorr)}
+}
+\makeatother
+\begin{document}
+\maketitle
+
+\section*{Abstract}
+În ciuda avantajelor sale semnificative, KLT nu a înlocuit încă FT.\@ În special, complexitatea asociată și, prin urmare, sarcina computațională încă vorbesc împotriva KLT și, de fapt, favorizează FFT clasică.\@ Transformata Fourier își are rapida implementare numerică numită Transformată Fourier Rapidă cu o complexitate de \(O(n\times\log(n))\) (adică\ \(n\times\log(n)\) operații de adăugare/multiplicare pe date de lungime n).
+Complexitatea implementării numerice a KLT este mult mai mare — \(O(n^2)\).
+Motivul care stă la baza acestei diferențe este că FFT utilizează un set predefinit de funcții ortogonale (sinus și cosinus),
+în timp ce KLT caută cea mai bună reprezentare a funcției ortogonale pentru fiecare semnal individual.\@ Un rezumat comparativ al caracterizărilor este prezentat în tabelul \ref{table:1}.
+\begin{table}[H]
+	\centering
+	\begin{tabular}{ |c | c | c| }
+		\hline
+		\                                 & Fast Fourier Transform & Karhunen-Loeve Transform        \\
+		\hline
+		Decomposition functions           & Sines and cosines      & Any orthonormal functions       \\
+		\hline
+		Type of signal analysis           & Deterministic          & Deterministic and stochastic    \\
+		\hline
+		Optimal frequency range           & Narrowband signals     & Narrowband and wideband signals \\
+		\hline
+		Potential to detect feeble signal & Small                  & High                            \\
+		\hline
+		Complexity                        & $O(n\times\log(n))$    & $0(n^2)$                        \\
+		\hline
+	\end{tabular}
+	\caption{Comparison of selected characteristics of \\the Fast Fourier Transform and Karhunen-Loeve Transform}
+	\label{table:1}
+\end{table}
+
+\section*{KLT and FFT --- Analogies and Differences}
+
+Transformata Karhunen-Loeve și transformata Fourier au multe analogii, dar și diferențe importante.\@ Pentru a obține mai multe informații despre caracteristicile matematice ale fiecăruia dintre ele, să comparăm ecuațiile pentru seria Fourier a unui semnal periodic determinist \(x( t)\) și expansiunea sa analogă KL a unui proces stocastic al semnalului \(X(t)\) sunt comparate.\@ (Variabilele stocastice sunt notate cu majuscule).
+
+După cum este bine cunoscut, orice semnal periodic poate fi exprimat în termenii unei serii Fourier, după cum urmează:
+\begin{equation}
+	x(t)=\frac{a_0}{2}+\sum_{n=1}^{\infty}[a_n\cos({\omega_n}t)+b_n\sin({\omega_n}t)]
+\end{equation}\label{eq:1}
+unde frecvențele unghiulare sunt definite de \(w = n(2\pi/ T)\) cu perioada semnalului fiind \(T=t_2-t_1\).
+
+Această ecuație definește un semnal determinist \(x(t)\) ca o sumă de sinusuri și cosinusuri care au o amplitudine egală cu coeficienții corespunzători \(a_n\) și \(b_n\).\@ Norma pătratului acestor coeficienți oferă informații despre puterea la coeficientul frecvenței coeficienților.\@ Prin\linebreak definiție, funcțiile de bază FFT sunt extinse între minus infinit și infinit, ceea ce permite calcularea amplitudinilor exacte ale funcțiilor pentru fiecare frecvență.
+
+Coeficienții \(a_n\) și \(b_n\) ai seriei Fourier sunt definiți prin următoarele formule:
+\begin{equation}
+	a_n=\frac{2}{T}\int_{t_1}^{t_2}x(t)\cos({\omega_n}t)\,dt
+	\label{eq:2}
+\end{equation}
+\begin{equation}
+	b_n=\frac{2}{T}\int_{t_1}^{t_2}x(t)\sin({\omega_n}t)\,dt
+	\label{eq:3}
+\end{equation}
+
+Acestea sunt proiecții integrate ale sinusului și cosinusului pe semnal.
+
+Aplicarea metodologiei KLT la un proces stocastic \(X(t)\) pe intervalul de timp finit $0 \leq t \leq T$ poate fi reprezentată prin ecuația (\ref{eq:4}) care arată unele analogii cu Fourier serie:
+\begin{equation}
+	X(t)=\sum_{n=1}^{\infty}Z_n\Phi_n(t)
+	\label{eq:4}
+\end{equation}
+Funcțiile deterministe $\Phi_n(t)$ sunt numite vectori proprii sau funcții proprii, în timp ce $Z_n$ sunt variabile scalare aleatoare.\@ Aceasta este o ecuație foarte scurtă, dar consecințele și posibilitățile care stau în spatele ei sunt enorme.\@ După cum putem vedea, aceasta este o descompunere generică în spațiul vectorial folosind funcții proprii,
+care poate avea în principiu orice formă.\@ Ar trebui să menționăm că, atât în seria Fourier, cât și în expansiunea KL, funcțiile proprii trebuie să fie ortonormale, adică ortogonale și normalizate la 1.\@ De fapt, aceste funcții sunt necorelate. și poate fi o bază pentru oricare
+semnal în spațiul euclidian de dimensiuni infinite acoperit de aceste funcții.
+
+O altă notă importantă: funcțiile proprii $\Phi_n(t)$ sunt pentru expansiunea KL ceea ce este mulțimea de sinusuri și cosinusuri pentru
+Seria Fourier.\@ Cu toate acestea, forma funcțiilor proprii este în principiu necunoscută și se adaptează la semnalul care este procesat.\@ De asemenea, spre deosebire de seria Fourier, funcțiile proprii KLT au un suport finit, făcând inutilă cerința unui semnal periodic.\@ Acesta este un avantaj important al expansiunii KL în comparație cu FT, deoarece datele de prelucrat au de obicei o durată finită.
+
+Dar cel mai revoluționar aspect al expansiunii KL urmează să apară.
+
+Spre deosebire de FT, coeficienții $Z_n$ ai expansiunii KL a unui proces stocastic $X(t)$ sunt variabile aleatoare pure.\@ Spre deosebire de $a_n$ și $b_n$ din seria Fourier, coeficienții KL reflectă natura stocastică a datelor analizate.\@ În lucrarea sa, Maccone a propus calcularea variabilei aleatoare $Z_n$, utilizând o ecuație foarte asemănătoare cu formulele (\ref{eq:2}) și (\ref{eq:3}):
+\begin{equation}
+	Z_n=\int_{0}^{T}X(t)\Phi_n(t)\,dt
+	\label{eq:5}
+\end{equation}
+Similar coeficienților din seria Fourier, ecuația (\ref{eq:5}) descrie proiecția semnalului procesat pe funcții proprii.\@ Merită subliniat faptul că limitele integrale, care sunt finite, acoperă întregul semnal cu durata\ $0{\leq}t{\leq}T$; astfel, KLT se aplică bine și pentru semnalele neperiodice.
+
+Trebuie să subliniem că \textit{varianța} coeficienților de expansiune KL $Z_n$ este mai importantă decât coeficienții înșiși.\@ Această varianță se numește valoare proprie și se notează $\lambda_n$.
+
+Valoarea proprie $\lambda_n$, corespunde cu $\Phi_n(t)$ și reprezintă puterea așteptată a funcției proprii corespunzătoare și este semnificativă pentru capacitățile de filtrare ale KLT, care poate fi utilizat pentru detectarea semnalelor slabe.\@ Teoretic, ceea ce Maccone demonstrează în articolul său este că un semnal care conține doar zgomot pur este caracterizat de valori proprii KLT, care sunt distribuite uniform și egale cu unu.\@ Acest lucru este valabil numai pentru un semnal continuu.\@ În consecință, putem deja afirma că valori proprii mai mari decât se pot identifica că o funcție proprie corespunzătoare se corelează mai bine cu semnalul ascuns decât cu zgomotul rămas.
+
+Deci, cum se calculează valorile proprii și funcțiile proprii ale unui semnal? KLT calculează covarianța unui semnal procesat care este apoi utilizat pentru a-și găsi valorile proprii și vectorii proprii.\@ Următoarele
+ecuații sunt derivate în articolul lui Maccone, cu (\ref{eq:6}) oferind o ecuație fundamentală pentru a calcula valorile proprii și funcțiile proprii necunoscute:
+\begin{equation}
+	\int_{0}^{T}E\{X(t_1)X(t_2)\}\Phi_n(t)\,dt_1=\lambda_n\Phi_n(t_2)
+	\label{eq:6}
+\end{equation}
+Ecuația (\ref{eq:6}) este derivată analitic din ecuația de expansiune KL (\ref{eq:4}).\@ În această ecuație $E\{X(t_1)X(t_2)\}$ reprezintă autocorelarea unui proces stocastic $X(t)$ la instantele $t_1$ și $t_2$.\@ Aceasta este singura variabilă cunoscută a acestei ecuații.\@ Funcția de autocorelare liniară este calculată direct din semnalul procesat.
+
+Datorită acestui fapt, funcția proprie caracterizează structura unui semnal procesat în același timp în care acesta devine sensibil la comportamentul armonic al semnalului.\@ Acesta este principalul avantaj al KLT față de FT.\@ Datorită acestei sensibilități, este acum este posibilă identificarea funcţiilor proprii legate de conţinutul non-stochastic al semnalului.\@ După cum sa menţionat mai devreme, un parametru care permite această identificare este valoarea proprie.
+
+În timpul simulărilor pentru care rezultatele sunt prezentate mai târziu în acest articol, au fost procesate semnale discrete, iar lungimea autocorelației a fost finită.\@ În aceste condiții, valorile proprii ale unui semnal numai de zgomot converg la una și sunt egale cu una în medie.
+
+Pentru aplicațiile digitale lucrăm pe semnale eșantionate.\@ Deci, ca de obicei, înlocuirea integralei prin însumare ne aduce de la date continue la date discrete, astfel:
+\begin{equation}
+	\label{eq:7}
+	\sum_{k=1}^{N}E\{X_kX_l\}{\Phi}_{n_k}{\Delta}t=\lambda_n \Phi_{n_l}
+\end{equation}
+care este o mulțime de N ecuații liniare cu N necunoscute; $E\{{X_k}{X_l}\}$ este o matrice de autocorelare Toeplitz de dimensiunea NxN și, în final, ${\Delta}t$ denotă durata de timp a\linebreak eșantionului.
+Ecuația (\ref{eq:7}) este rezolvată cu regulile algebrei liniare clasice.\@ Valorile proprii și vectorii proprii pot fi determinați folosind metode comune.\@ Această ecuație poate fi întotdeauna rezolvată; totuși, singurul dezavantaj al KLT rezidă aici.\@ Acest set de ecuații poartă cu el o sarcină de calcul semnificativă de ordinul $O(N^2)$.\@ Maccone a demonstrat prima abordare de succes a problemei calculului timp, despre care va fi discutat mai târziu în acest articol.
+
+Această introducere teoretică ne conduce la partea practică.\@ Scopul nostru aici a fost să investighem capacitățile KLT aplicate la detectarea semnalelor slabe, în special cele care pot fi dăunătoare semnalelor GNSS din partea receptorului și care urmează să fie detectate de la depărtare.
+
+Pentru a obține o perspectivă mai bună asupra capacităților de detectare oferite de diferitele metodologii binecunoscute, le-am testat folosind aceleași date de intrare.\@ Am structurat testele în trei etape.\@ Primul exemplu demonstrează modul în care KLT descompune un semnal și identifică valorile proprii și funcțiile proprii ale datelor.\@ Apoi, a fost selectat un semnal sinusoidal unic de bandă îngustă pentru a verifica performanța KLT.\@
+
+Exemplul final abordează capacitățile de detectare a semnalului în bandă largă ale diferitelor abordări.\@ Am efectuat ultimul exercițiu (sau etapă) pentru două tipuri de semnale: un semnal modulat BPSK (binary phase shift keying), reprezentând un semnal staționar pentru dezvăluie limitările KLT privind semnalele de bandă largă (Exemplul 3) și un chirp în bandă laterală, care reprezintă Exemplul 4 și a permis testarea comportamentului KLT în prezența unui semnal non-staționar.
+
+\section*{Example 1: Decomposition of the Signal}
+
+Acest exemplu simplu arată cum se realizează descompunerea unui semnal $X(t)$ folosind KLT.\@ Descompunerea începe cu calcularea funcției de autocorelare liniară a semnalului primit.\@ Următorul pas este construirea unei autocorelații. Matricea Toeplitz și utilizați ecuația (\ref{eq:7}) pentru a rezolva un set de ecuații liniare.\@ Rezultatul acestei ecuații este setul de valori proprii și funcțiile proprii corespunzătoare.
+
+Parametrii prezentați în \begin{normalsize}\color{red}Table 2\end{normalsize} au fost selectați pentru acest exemplu.
+\begin{center}
+	\color{blue}Table 2. Simulation parameters; decomposition of the sine signal
+\end{center}
+\begin{normalsize}\color{red}Figura 1\end{normalsize} arată reprezentarea în timp a semnalului exemplu.\@ Deoarece componenta semnalului sinusoidal apare la același nivel de putere ca și componenta de zgomot, semnalul dorit abia poate fi identificat în grafic.
+\begin{center}
+	\color{blue}Figura 1. $X(t)$, sine signal at 1 hertz plus noise; SNR = 0 decibel, 10 samples
+\end{center}
+\begin{normalsize}\color{red}Figura 2\end{normalsize} prezintă valorile proprii calculate și funcțiile proprii corespunzătoare ale semnalului.\@ Graficul arată în mod clar că primele două valori proprii sunt semnificativ mai mari decât toate celelalte.\@ Primele două funcții proprii corespunzătoare acestor valori proprii sunt, de asemenea, caracteristice deoarece prezintă un comportament asemănător sinusului la o frecvență de un hertz, care se referă la sinusul ascuns din semnalul procesat.
+
+Mai mult, funcțiile proprii ne permit să distingem conținutul non-stohastic al semnalului de conținutul de zgomot, care este reprezentat de funcțiile proprii rămase.
+\begin{center}
+	\color{blue}Figura 2. Eigenfunctions and eigenvalues of the example signal
+\end{center}
+\section*{Example 2: Narrowband Signal Detection}
+După ce am ilustrat descompunerea unui semnal simplu într-un mediu cu zgomot redus utilizând KLT, următorul pas este de a investiga limitele tehnicii KLT pentru a detecta semnale în mediul cu zgomot foarte puternic.\@ În următorul test, performanța KLT este comparată și cu aceasta. a unei FFT.\@ Rețineți că pentru estimarea semnalului este utilizată o singură funcție proprie.
+
+Cu toate acestea, poate fi ales orice număr de funcții proprii calculate, în funcție de nivelul de filtrare necesar.\@ Cu cât luați în considerare mai multe funcții proprii, cu atât mai multe informații despre semnal (inclusiv zgomot) devin parte din estimare.\@ \begin{normalsize}\color{red}Table 3\end{normalsize} prezintă para-metrii selectați pentru acest exemplu.\begin{center}
+	\color{blue}Table 3. Simulation parameters, narrowband signal detection
+\end{center}
+Din Tabelul 3 putem observa că rezoluția de frecvență a spectrului estimat este diferită pentru ambele metode.\@ Rezoluția FFT este invers proporțională cu lungimea semnalului, în timp ce KLT este invers proporțional cu lungimea funcției de autocorelație (ACF).\ @ Deoarece lungimea ACF este mai mică decât lungimea semnalului, FFT oferă o rezoluție spectrală mai bună.
+
+Rezultatele comparative ale detectării semnalului pentru FFT și KLT sunt prezentate în \begin{normalsize}\color{red}Figura 3\end{normalsize}, ceea ce arată clar că KLT detectează un semnal ascuns non-stohastic cu o sensi-bilitate mult mai mare decât o face FFT.\@ Vârful frecvenței semnalului ascuns, așa cum este detectat de KLT, este foarte mare și nu lasă nicio îndoială dacă acesta este semnalul dorit sau zgomot.\@ Estimările spectrului de putere rezultate din utilizarea unei tehnici FFT sunt mult mai dificil de interpretat.
+\begin{center}
+	\color{blue}Figura 3. Power spectrum estimates applying FFT and KLT techniques
+\end{center}
+Pentru a completa prezentarea generală a acestui scenariu de simulare, \begin{normalsize}\color{red}Figura 4\end{normalsize} prezintă primele 10 valori proprii (din totalul de 500) ale unui semnal derivat folosind estimarea KLT.\@ Valorile proprii ale semnalului + zgomot sunt reprezentate cu negru; valorile proprii doar ale componentei de zgomot sunt indicate în roșu.\@ Ca și în Figura 2, primele două valori proprii ies în mod clar în evidență.\@ Simulări suplimentare ar putea verifica că acest comportament este tipic pentru un semnal sinusoidual ascuns în zgomot. De asemenea, dorim să evidențiați faptul că o valoare proprie semnificativ mai mare nu este singura cerință pentru ca KLT să poată detecta corect un semnal non-stochastic.\@ Valoarea proprie corespunzătoare semnalului dorit trebuie, de asemenea, să fie mai mare decât valoarea proprie corespunzătoare a zgomotului.\ @ Deși fiecare valoare proprie a zgomotului în teorie este egală cu una în calculele numerice, numai media tuturor valorilor proprii este egală cu unu.\@ Prin urmare, valorile proprii ale zgomotului sunt diferite de una; în consecință, nu ne putem baza pe un prag egal cu unul pentru a distinge între zgomot și semnal.
+\begin{center}
+	\color{blue} Figura 4. Eigenvalues of the signal. Black asterisks are the eigenvalues of the received signal + noise, and red ones are the eigenvalues of the noise component in this signal.
+\end{center}
+În Figura 4, primele două valori proprii de zgomot nu sunt în mod clar apropiate de unu, ci mai mari.\@ Prin utilizarea unei funcții de autocorelare mai lungă, valorile proprii de zgomot converg către una, dar încă nu sunt distribuite uniform.
+
+\section*{Example 3: Wideband Signal Detection}
+
+Exemplul anterior a arătat că KLT are performanțe mai bune decât FFT în detectarea semnalului în bandă îngustă.\@ În continuare, KLT este aplicat semnalelor în bandă largă.\@ Un semnal modulat cu BPSK servește ca eșantion de semnal pentru detectare.
+
+Prezentăm rezultatele în domeniul timp-frecvență (vezi, de exemplu \begin{normalsize}\color{red}Figura 5\end{normalsize}).\@ Acest lucru ne permite să vedem schimbări în spectrurile estimate pentru diferite momente ale unei observații de semnal.
+\begin{center}
+	\color{blue}Figura 5. The KLT spectrogram and power spectrum estimation; BPSK(1) signal, SNR = -12 decibels
+\end{center}
+
+O cerință fundamentală pentru realizarea unei estimări adecvate a spectrului este selectarea unei funcții de fereastră care păstrează caracteristicile spectrale originale ale semnalului fără a introduce distorsiuni semnificative datorate procesului de estimare.
+
+În articolul lui G. Heinzel și alții, citat în Resurse suplimentare, tipul de fereastră HFT90D este propus ca fiind optim pentru semnalele de bandă îngustă deoarece determină amplitudinea exactă a unei componente sinusoidale.\@ Se recomandă analize ulterioare pentru a determina o fereastră cea mai potrivită pentru bandă largă. semnale.\@ Cu toate acestea și în scopuri demonstrative, fereastra HFT90D este utilizată în următorul exemplu de bandă largă.
+
+În comparație cu alte ferestre flat-top — acele funcții ale ferestrei care sunt cât mai plate posibil în domeniul frecvenței — HFT90D are o lățime de bandă relativ îngustă de trei decibeli și o atenuare foarte puternică a lobului lateral.\@ Potrivit lui G. Heinzel și altele, suprapunerea recomandată a funcțiilor ferestrei aplicate fluxului de date este de 76 la sută.\ \begin{normalsize}\color{red}Table 4\end{normalsize} listează parametrii selectați pentru exemplul de detectare a semnalului în bandă largă.
+\begin{center}
+	\color{blue}Table 4. Simulation parameters; wideband signal detection - BPSK(1) modulated
+	siqnal
+\end{center}
+Pentru a obține o rezoluție de frecvență suficient de mare a estimării spectrului de putere folosind tehnica KLT, ACF preia 1.000 de eșantioane.\@ Acest lucru, totuși, vine cu prețul unui timp de calcul mai lung.
+
+În consecință, KLT are nevoie de un număr mare de funcții proprii pentru a detecta un semnal de bandă largă fără a pierde o parte din informațiile care descriu semnalul non-stohastic.\@ În acest caz particular au fost alese 50 din cele 1.000 de funcții proprii.\@ Trebuie să păstrăm în rețineți, totuși, că numărul de funcții proprii luate pentru a estima spectrul semnalelor este într-adevăr parametrul variabil KLT care determină nivelul de filtrare.
+
+În secțiunile următoare, prezentăm rezultatele aplicării metodelor KLT, STFT și Wigner-Ville pentru a detecta un semnal BPSK ascuns cu un nivel SNR de -12 decibeli.\@ Pentru fiecare metodă sunt prezentate două diagrame.\@ Prima arată spectrograma semnalului procesat, iar al doilea diagramă arată estimarea spectrului de putere obţinută prin media spectrogramei.
+
+\subsection*{KLT}
+
+Graficul de sus din Figura 5 arată spectrograma semnalului calculat prin transformarea Karhunen-Loeve. Cea mai mare parte a puterii pare clar a fi situată în banda inferioară a spectrului, cu mult mai puțină putere la frecvențe mai înalte. Cu toate acestea, este posibil ca această spectrogramă să nu fie suficient de precisă pentru a identifica corect semnalul BPSK. Prin urmare, datele sunt mediate în timp, estimarea spectrului de putere obținută a spectrogramei medii (graficul inferior) asemănând destul de clar cu semnalul BPSK(1).
+
+\subsection*{STFT}
+
+În mod similar cu figura 5, \begin{normalsize}\color{red}Figura 6\end{normalsize} oferă rezultatele spectrului
+estimare folosind o transformată Fourier de scurtă durată. Spectrograma, precum și spectrul de putere arată că metoda STFT nu reușește să detecteze semnalul de bandă largă.
+Cu toate acestea, frecvențele inferioare au o putere puțin mai mare în comparație cu media. Cu toate acestea, zgomotul domină semnalul; deci, nu putem recunoaște
+semnal BPSK(1).
+\begin{center}
+	\color{blue}Figura 6. The STFT spectrogram and power spectrum estimation; BPSK(1); SNR = -12dB
+\end{center}
+
+\subsection*{Wigner-Ville}
+
+Figura 7 prezintă rezultatele utilizând metoda Wigner-Ville. Ca și în cazul STFT, Wigner-Ville nu reușește să detecteze semnalul de bandă largă.
+\begin{center}
+	\color{blue}Figura 7. The Wigner-Ville spectrogram and power spectrum estimation; BPSK(1); SNR = -12dB
+\end{center}
+Pentru a rezuma rezultatele simulare precedente, se poate observa că tehnica KLT într-adevăr este capabilă să detecteze semnale de bandă largă chiar și în prezența unui zgomot foarte puternic, în timp ce metodele STFT și Wigner-Ville eșuează în mod clar.
+
+Mai mult, se poate observa că, deși nivelul SNR este puțin mai mare în comparație cu cel utilizat în Exemplul 2 (detecția semnalului în bandă îngustă), mai multe mostre de
+semnalul a fost necesar pentru estimarea spectrului de putere. Un semnal de bandă largă transportă o mulțime de informații care trebuie observate pentru o perioadă mai lungă de timp în comparație cu un semnal de bandă îngustă pentru a recunoaște structura sa non-stochastică.
+
+\section*{Example 4: Chirp Signal Detection}
+
+De asemenea, am analizat un semnal chirp cu o limită largă de frecvență. Acest tip de semnal a fost ales pentru a ne permite să evaluăm performanța KLT în detectarea
+un semnal dinamic, nestaționar.\ \begin{normalsize}\color{red}Table 5\end{normalsize} listează parametrii de simulare pentru acest test.
+\begin{center}
+	\color{blue}Table 5. Simulation parameters; wideband signal detection --- chirp modulated signal
+\end{center}
+Pentru a putea realiza o estimare a spectrogramei cu o rezoluție bună în timp, lungimea ferestrei a fost scurtată la 1.000 de eșantioane. De asemenea, lungimea ACF a fost redusă la 500 de probe. Această setare accelerează simularea, dar reduce rezoluția de frecvență a estimării spectrului KLT.
+
+\begin{normalsize}\color{red}Figura 8\end{normalsize} arată spectrograma KLT și spectrul de putere. Pentru un semnal cu SNR = -12dB, spectrograma este puțin uzată, dar încă poate fi citită. KLT este capabil să detecteze semnalul chirp în zgomot.
+
+Provocarea aici este de a defini o lungime adecvată a ferestrei de observare. Trebuie să fie suficient de lung pentru a detecta semnalul, dar și suficient de scurt pentru a atinge rezoluția de timp necesară. Dacă se ia în considerare doar o perioadă scurtă de timp a semnalului, procesul de detectare pentru un semnal chirp este similar cu detectarea unui semnal de bandă îngustă și, prin urmare, ne permite să ne bazăm doar pe câteva funcții proprii inițiale.
+
+Deși rezultatele nu sunt afișate aici, ca în exemplul anterior, metodele STFT și Wigner-Ville nu au reușit să detecteze semnalul chirp în condițiile date.
+\begin{center}
+	\color{red}Figura 8. Spectrogram KLT;\@ chirp;\@ SNR = -12 dB
+\end{center}
+
+\section*{BAM-KLT:\@ A Step Closer to Fast KLT}
+
+Din nou, cel mai mare dezavantaj al KLT este complexitatea sa și sarcina de calcul ridicată care rezultă. Totuși, ca și în cazul transformatei Fourier, care a devenit populară atunci când implementarea sa rapidă (FFT) a devenit disponibilă, KLT are potențialul de a experimenta un impuls similar dacă este descoperită o implementare rapidă a KLT.
+
+Maccone a prezentat deja un mod inovator de utilizare a KLT, care deschide calea către un algoritm mai rapid. El a numit această metodă BAM-KLT (Bordered Autocorelation Method KLT), iar lucrarea sa oferă un exemplu de detectare a semnalului sinusoidală cu succes folosind BAM-KLT pentru a detecta corect un semnal ascuns în zgomot (SNR = -23 decibeli), în timp ce FFT a eșuat.
+
+Această lucrare a dezvăluit faptul că valorile proprii sunt funcții ale unui moment final T (același T care apare în definiția expansiunii KL a momentului final al semnalului). Folosind această descoperire, Maccone a definit „teorema variației finale” exprimată printr-o ecuație:
+\begin{equation}
+	\sigma_{X(T)}^2=\sum_{n=1}^{\infty}\pdv{\lambda_n(T)}{T}
+	\label{eq:8}
+\end{equation}
+
+Această teoremă afirmă că varianța unui proces stocastic $X(t)$ este egală cu suma seriei de derivate parțiale ale valorilor proprii $\lambda_n(T)$ în raport cu momentul final $T$. Sa constatat că calculul unui spectru al unei astfel de derivate parțiale obține spectrul parțial al semnalului. Similar cu expansiunea KL, primii termeni - adică derivatele parțiale ale valorilor proprii - conțin cele mai utile informații despre conținutul non-stohastic al semnalului.
+
+În teorie, folosind această metodă în procesarea semnalului, s-ar putea reduce sarcina de calcul. În loc să se calculeze atât funcțiile proprii, cât și valorile proprii, este suficientă doar determinarea setului de valori proprii. În plus, caracteristica de filtrare KLT poate fi utilizată și în această teoremă. Dacă se utilizează doar acea informație păstrată în derivata primei valori proprii, ecuația (8) poate fi simplificată la:
+\begin{equation}
+	\sigma_{X(T)}^2 \thickapprox \pdv{\lambda_1(T)}{T}
+	\label{eq:9}
+\end{equation}
+
+Trebuie să subliniem că BAM-KLT este încă o tehnică care trebuie explorată și testată în continuare înainte de a putea fi utilizată într-un mod previzibil.
+
+De exemplu, BAM-KLT prezintă un comportament nedorit la jumătate din frecvența \linebreak Nyquist: când se utilizează reprezentarea frecvenței normale pentru spectrul semnalului, semnalul este afișat la o frecvență dublă a acestuia. Această problemă a fost discutată în lucrare de către Maccone, dar nu a fost rezolvată.
+
+Pe baza parametrilor din \begin{normalsize}
+	\color{red}Table 6
+\end{normalsize}, simularea următoare arată un alt comportament, foarte interesant, al valorilor proprii dincolo de cele discutate de Maccone, care necesită explicații suplimentare.
+\begin{center}
+	\color{blue}Table 6. Simulation parameters for the BAM-KLT example
+\end{center}
+Să considerăm doar primele două valori proprii ale semnalului în funcție de intervalul de timp și derivatele lor. Valorile proprii sunt reprezentate grafic în Figura 9. Prin definiție, prima valoare proprie trebuie să fie întotdeauna mai mare decât a doua. Dar aici se pare că primele două valori proprii devin egale în anumite puncte. Acestea reprezintă puncte de discontinuitate ale funcțiilor cu valori proprii ale intervalului de timp. Aceste valori proprii ar putea fi, de asemenea, legate între ele, ceea ce nu era de așteptat.
+
+O posibilă explicație ar putea sta în funcțiile proprii. Sunt ortogonale, dar pot avea și aceeași reprezentare a spectrului (cum ar fi, de exemplu, sinus și cosinus). În consecință, în funcție de intervalul de timp al semnalului, o funcție proprie sau alta are cele mai mari șanse să apară în semnal.
+
+Situația devine și mai complicată atunci când se procesează semnale mai complexe. În acest caz, se poate observa că valorile proprii se întrepătrund nu numai în perechi, ci și cu alți „vecini”.
+
+Acest lucru are un efect și asupra derivatelor. La calculul FFT al derivatelor primei și celei de-a doua valori proprii, rezultatul este un sinus de spectru cu armonici, din cauza discontinuității funcției. Mai mult, derivatele conțin o componentă de curent continuu (DC) deoarece valoarea medie a funcției nu este egală cu zero.
+
+Această problemă este prezentată aici pentru a face utilizatorii conștienți de comportamentul neașteptat al BAM-KLT și, de asemenea, pentru a arăta domenii de îmbunătățire și investi-gații viitoare.
+
+\section*{BAM-KLT and Wideband Signals}
+
+Deoarece rezultate foarte promițătoare ale detectării unui singur ton într-un zgomot puternic au fost prezentate în lucrarea lui Maccone, am considerat că merită să testăm capacitățile de detectare ale BAM-KLT pentru semnale de bandă largă. Următoarele rezultate se bazează pe condiții de testare identice ca și în testele anterioare pentru estimarea unui spectru de semnal de bandă largă. Mai întâi sunt prezentate rezultatele detectării semnalului BPSK(1) ascuns, urmate de detectarea unui chirp.
+
+Ca și în exemplele anterioare de detectare a semnalului BPSK, \begin{normalsize}\color{red}Figura 10\end{normalsize} prezintă rezultatul sub formă de spectrogramă și estimarea spectrului de putere. Din păcate, caracteristica BPSK(1) nu este vizibilă și, prin urmare, detectarea semnalului eșuează.
+\begin{center}
+	\color{blue}Figura 10. Spectrogram BAM-KLT; BPSK(1); SNR = -12dB
+\end{center}
+Un comportament tipic al BAM-KLT este componenta DC dominantă în ambele parcele. Capacitatea de detectare a semnalului a BAM-KLT este mult mai slabă decât cea din exemplele originale KLT (Figurile 5 și 6) și chiar mai slabă decât ceea ce a fost obținut folosind metodele STFT și Wigner-Ville. Evident, semnalul BPSK nu poate fi detectat de BAM-KLT pentru condițiile date.
+\section*{BAM-KLT and Chirp Signal Detection}
+BAM-KLT arată o performanță mult mai bună atunci când vine vorba de semnale chirp.
+Dar, desigur, încă nu este la fel de bun ca KLT original.\@ Din spectrogramă (\begin{normalsize}\color{red}Figura 11\end{normalsize}) se vede că chirpul a fost detectat cu succes. Cu toate acestea, în spectru apare o componentă DC foarte puternică, ceea ce ar putea
+fac imposibilă detectarea unui semnal de joasă frecvență. Se poate spune că BAM-KLT este deja suficient de puternic pentru a detecta semnale în bandă îngustă, excluzând semnale de joasă frecvență, care sunt îngropate de componenta DC puternică observată în grafice.
+\begin{center}
+	\color{blue}Figura 11. Spectrogram BAM-KLT;\@ chirp;\@ SNR = -12dB
+\end{center}
+
+\section*{Conclusions}
+
+Acest articol arată că tehnica KLT are un potențial foarte mare și poate depăși metodele clasice de detectare a semnalului care sunt folosite astăzi. KLT este la fel de capabil să detecteze atât semnale în bandă îngustă, cât și semnale în bandă largă, ceea ce merită o atenție deosebită dacă
+ne gândim la aplicații viitoare în domeniul GNSS.
+
+Simulările prezentate aici indică faptul că această transformare ne permite să detectăm semnale mai slabe decât metodele FFT, STFT și Wigner-Ville. Principalul punct forte al KLT este caracteristica sa naturală de adaptare la caracteristicile semnalului procesat. Ca rezultat, permite filtrarea unui semnal non-stochastic din zgomot.
+
+KLT este, de asemenea, mai flexibil și mai configurabil decât alte metodologii cunoscute. Acest lucru permite utilizatorului să controleze direct nivelul de filtrare. Cu toate acestea, capabilitățile remarcabile de detectare ale KLT trebuie plătite printr-o sarcină de calcul ridicată.
+
+BAM-KLT, care prezintă performanțe excelente de detectare atunci când este aplicat funcții-lor sinusoidale pure, este capabil să reducă semnificativ sarcina de calcul. Prin urmare, pot fi trase unele analogii între BAM-KLT și FFT.\@ Într-adevăr, introducerea FFT a făcut posibilă exploatarea transformatei Fourier într-un mod eficient numeric.
+
+Un viitor similar ar putea fi de așteptat pentru BAM-KLT. Cu toate acestea, înainte ca BAM-KLT sau o metodologie strâns legată să poată fi aplicate eficient, spectrul de semnale detectabile trebuie mărit semnificativ. Acest articol arată că BAM-KLT nu este încă capabil să detecteze fără ambiguitate semnale de bandă largă, cum ar fi BPSK-urile care apar ca zgomot sau interferență într-un semnal asemănător GNSS. Prin urmare, în acest domeniu trebuie investite în continuare lucrări de cercetare. Un potențial punct de plecare ar putea fi identificarea relațiilor dintre semnalele de detectat, funcția de fereastră și numărul de valori proprii caracteristice.
+
+Pe scurt, putem spune că KLT este un instrument matematic foarte performant și s-ar putea dovedi a fi de mare valoare.\end{document}
